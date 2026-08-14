@@ -317,7 +317,6 @@ $(Time)/TimePaths.T.C
 $(Time)/TimeState.T.C
 $(Time)/Time.T.C
 $(Time)/TimeIO.T.C
-$(Time)/findTimes.C
 $(Time)/subCycleTime.C
 $(Time)/timeSelector.C
 

@@ -28,6 +28,7 @@ License
 #include "cellIOList.H"
 #include "zonesGenerator.H"
 #include "OSspecific.H"
+#include "polyTopoChangeMap.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -72,9 +73,7 @@ void Foam::polyMesh::setTopologyWrite(const Foam::IOobject::writeOption wo)
 
 bool Foam::polyMesh::readUpdateIsForward() const
 {
-    scalar time0 = NaN;
-
-    return readScalar(instance().c_str(), time0) && time0 < time().value();
+    return instant(instance()).value() < time().value();
 }
 
 
@@ -261,27 +260,20 @@ Foam::polyMesh::readUpdateState Foam::polyMesh::readUpdate()
             *this
         );
 
-        // Check that patch types and names are unchanged
+        // Determine whether patch types and names have changed
         bool boundaryChanged = false;
-
         if (newBoundary.size() != boundary_.size())
         {
             boundaryChanged = true;
         }
         else
         {
-            wordList newTypes = newBoundary.types();
-            wordList newNames = newBoundary.names();
-
-            wordList oldTypes = boundary_.types();
-            wordList oldNames = boundary_.names();
-
-            forAll(oldTypes, patchi)
+            forAll(boundary_, patchi)
             {
                 if
                 (
-                    oldTypes[patchi] != newTypes[patchi]
-                 || oldNames[patchi] != newNames[patchi]
+                    boundary_[patchi].type() != newBoundary[patchi].type()
+                 || boundary_[patchi].name() != newBoundary[patchi].name()
                 )
                 {
                     boundaryChanged = true;
@@ -289,6 +281,7 @@ Foam::polyMesh::readUpdateState Foam::polyMesh::readUpdate()
                 }
             }
         }
+        reduce(boundaryChanged, orOp());
 
         if (boundaryChanged)
         {
@@ -297,22 +290,17 @@ Foam::polyMesh::readUpdateState Foam::polyMesh::readUpdate()
 
             forAll(newBoundary, patchi)
             {
-                boundary_.set(patchi, newBoundary[patchi].clone(boundary_));
+                boundary_.set
+                (
+                    patchi,
+                    newBoundary[patchi].clone(boundary_)
+                );
             }
         }
         else
         {
             forAll(boundary_, patchi)
             {
-                // boundary_[patchi] = polyPatch
-                // (
-                //     newBoundary[patchi].name(),
-                //     newBoundary[patchi].size(),
-                //     newBoundary[patchi].start(),
-                //     patchi,
-                //     boundary_
-                // );
-
                 boundary_[patchi].reset
                 (
                     newBoundary[patchi].size(),
@@ -369,6 +357,12 @@ Foam::polyMesh::readUpdateState Foam::polyMesh::readUpdate()
 
         // Re-read tet base points
         tetBasePtIsPtr_ = readTetBasePtIs();
+
+        // Update any generated zones
+        polyTopoChangeMap map(*this);
+        pointZones_.topoChange(map);
+        faceZones_.topoChange(map);
+        cellZones_.topoChange(map);
 
         if (boundaryChanged)
         {
@@ -434,6 +428,11 @@ Foam::polyMesh::readUpdateState Foam::polyMesh::readUpdate()
         // Rotation can cause direction vector to change
         geometricD_ = Zero;
         solutionD_ = Zero;
+
+        // Update any generated zones
+        pointZones_.movePoints(points_);
+        faceZones_.movePoints(points_);
+        cellZones_.movePoints(points_);
 
         state = polyMesh::POINTS_MOVED;
     }

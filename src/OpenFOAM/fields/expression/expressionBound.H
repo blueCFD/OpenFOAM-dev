@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,25 +21,40 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Class
+    Foam::expression::Bound
+
 Description
-    Searches the current case directory for valid times
-    and sets the time list to these.
-    This is done if a times File does not exist.
+    An empty structure the type of which is used to indicate access to a bound
+    (i.e., begin or end iterator) of a given container
 
 \*---------------------------------------------------------------------------*/
 
-#include "Time.T.H"
+#ifndef expressionBound_H
+#define expressionBound_H
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-Foam::instantList Foam::Time::findTimes
-(
-    const fileName& directory,
-    const word& constantName
-) const
+namespace Foam
 {
-    return fileHandler().findTimes(*this, directory, constantName);
-}
+namespace expression
+{
 
+/*---------------------------------------------------------------------------*\
+                            Class Bound Declaration
+\*---------------------------------------------------------------------------*/
+
+template<bool>
+struct Bound
+{};
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace expression
+} // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
 
 // ************************************************************************* //

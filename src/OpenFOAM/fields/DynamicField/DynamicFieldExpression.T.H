@@ -34,116 +34,26 @@ namespace expression
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-//- A DynamicField is expressionable
+//- Define DynamicField to be expressionable by iteration
 template<class Type>
 struct Expressionable<DynamicField<Type>>
 :
-    public std::integral_constant
-    <
-        signed char,
-        std::max(static_cast<signed char>(0), Expressionable<Type>::value)
-      + static_cast<signed char>(1)
-    >
+    public ExpressionableIterable<DynamicField<Type>>
 {};
 
-//- Access to a DynamicField by index is expressionable if the type is
-template<class Type>
-struct Expressionable<DynamicField<Type>, Arguments<label>>
-:
-    public Expressionable<Type>
-{};
-
-//- Access to a DynamicField by iterator is expressionable if the type is
-template<class Type>
-struct Expressionable
-<
-    DynamicField<Type>,
-    Arguments<typename DynamicField<Type>::const_iterator>
->
-:
-    public Expressionable<Type>
-{};
-
-//- Define access to a value in a DynamicField by index
-template<class Type>
-struct Operate<DynamicField<Type>, Arguments<label>>
-{
-    using type = const Type&;
-
-    static type access(const DynamicField<Type>& f, const label i)
-    {
-        return f[i];
-    }
-};
-
-//- Define access to the start and end iterators of a DynamicField
-template<class Type, bool Index>
-struct Operate<DynamicField<Type>, Arguments<Bound<Index>>>
-{
-    using type = typename DynamicField<Type>::const_iterator;
-
-    static type access(const DynamicField<Type>& f, const Bound<false>&)
-    {
-        return f.begin();
-    }
-
-    static type access(const DynamicField<Type>& f, const Bound<true>&)
-    {
-        return f.end();
-    }
-};
-
-//- Define access to a value in a DynamicField by dereferencing an iterator.
-//  Also define comparison and incrementation of iterators.
+//- Define DynamicField operations to be expressionable by iteration
 template<class Type, class ... Args>
-struct Operate
-<
-    DynamicField<Type>,
-    Arguments<typename DynamicField<Type>::const_iterator, Args ...>
->
-{
-    using type = const Type&;
+struct Expressionable<DynamicField<Type>, Arguments<Args ...>>
+:
+    public ExpressionableIterable<DynamicField<Type>, Arguments<Args ...>>
+{};
 
-    static type access
-    (
-        const DynamicField<Type>& f,
-        const typename DynamicField<Type>::const_iterator& fi
-    )
-    {
-        return *fi;
-    }
-
-    static bool compare
-    (
-        const DynamicField<Type>& f,
-        const typename DynamicField<Type>::const_iterator& fi,
-        const typename DynamicField<Type>::const_iterator& fj
-    )
-    {
-        return fi == fj;
-    }
-
-    static void advance
-    (
-        const DynamicField<Type>& f,
-        typename DynamicField<Type>::const_iterator& fi
-    )
-    {
-        ++ fi;
-    }
-};
-
-//- Define access to the base expression of a DynamicField as itself
-template<class Type>
-struct Operate<DynamicField<Type>, Arguments<Base>>
-{
-    using type = const DynamicField<Type>&;
-
-    static type access(const DynamicField<Type>& f, const Base&)
-    {
-        return f;
-    }
-};
+//- Define DynamicField to operate by iteration
+template<class Type, class ... Args>
+struct Operate<DynamicField<Type>, Arguments<Args ...>>
+:
+    public OperateIterable<DynamicField<Type>, Arguments<Args ...>>
+{};
 
 //- Define the types returned by DynamicField expressions as the same as for
 //  Field expressions
