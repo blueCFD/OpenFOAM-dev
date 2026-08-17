@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,41 +21,60 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Namespace
-    Foam::fvc
-
-Description
-    Namespace of functions to calculate explicit derivatives.
-
 \*---------------------------------------------------------------------------*/
 
-#ifndef fvc_H
-#define fvc_H
-
-#include "fv.H"
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "surfaceInterpolate.H"
-#include "fvcVolumeIntegrate.H"
-#include "fvcSurfaceIntegrate.H"
-#include "fvcAverage.H"
-#include "fvcReconstruct.H"
-#include "fvcDdt.H"
-#include "fvcDDt.T.H"
-#include "fvcD2dt2.H"
-#include "fvcDiv.H"
-#include "fvcFlux.H"
-#include "fvcGrad.H"
-#include "fvcMagSqrGradGrad.H"
-#include "fvcSnGrad.H"
-#include "fvcCurl.H"
-#include "fvcLaplacian.H"
-#include "fvcSup.H"
-#include "fvcMeshPhi.H"
+#include "fviCurl.H"
+#include "fviGrad.H"
+#include "fvMesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#endif
+namespace Foam
+{
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+namespace fvi
+{
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+template<class Type>
+tmp<VolInternalField<Type>>
+curl(const VolField<Type>& vf)
+{
+    word nameCurlVf = "curl(" + vf.name() + ')';
+
+    // Gausses theorem curl
+    // tmp<VolInternalField<Type>> tcurlVf =
+    // fvi::surfaceIntegrateExtrapolate(vf.mesh().Sf() ^ fvi::interpolate(vf));
+
+    // Calculate curl as the Hodge dual of the skew-symmetric part of grad
+    tmp<VolInternalField<Type>> tcurlVf =
+        2.0*(*skew(fvi::grad(vf, nameCurlVf)));
+
+    tcurlVf.ref().rename(nameCurlVf);
+
+    return tcurlVf;
+}
+
+
+template<class Type>
+tmp<VolInternalField<Type>>
+curl(const tmp<VolField<Type>>& tvf)
+{
+    tmp<VolInternalField<Type>> Curl(fvi::curl(tvf()));
+    tvf.clear();
+    return Curl;
+}
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace fvi
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
 
 // ************************************************************************* //

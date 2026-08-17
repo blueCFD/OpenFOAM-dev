@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,30 +21,57 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Namespace
-    Foam::fvm
+InNamespace
+    Foam::fvi
 
 Description
-    Namespace of functions to calculate implicit derivatives returning a
-    matrix.
+    Reconstruct volField from a face flux field returning a volInternalField
 
-    Temporal derivatives are calculated using Euler-implicit, backward
-    differencing or Crank-Nicolson. Spatial derivatives are calculated
-    using Gauss' Theorem.
-
+SourceFiles
+    fviReconstruct.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef fvm_H
-#define fvm_H
+
+#ifndef fviReconstruct_H
+#define fviReconstruct_H
+
+#include "volFieldsFwd.H"
+#include "surfaceFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "fvmDdt.H"
-#include "fvmD2dt2.H"
-#include "fvmDiv.H"
-#include "fvmLaplacian.H"
-#include "fvmSup.H"
+namespace Foam
+{
+
+/*---------------------------------------------------------------------------*\
+                      Namespace fvi functions Declaration
+\*---------------------------------------------------------------------------*/
+
+namespace fvi
+{
+    template<class Type>
+    tmp<VolInternalField<typename outerProduct<vector, Type>::type>>
+    reconstruct(const SurfaceField<Type>&);
+
+    template<class Type>
+    tmp<VolInternalField<typename outerProduct<vector, Type>::type>>
+    reconstruct(const tmp<SurfaceField<Type>>&);
+
+    tmp<volScalarField> reconstructMag(const surfaceScalarField&);
+    tmp<volScalarField> reconstructMag(const tmp<surfaceScalarField>&);
+}
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#ifdef NoRepository
+    #include "fviReconstruct.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -45,6 +45,7 @@ Description
 #include "MRFZones.T.H"
 #include "adjustPhi.H"
 
+#include "fviDiv.H"
 #include "fvcFlux.H"
 #include "fvcReconstruct.H"
 
@@ -111,7 +112,7 @@ int main(int argc, char *argv[])
         (
             fvm::laplacian(dimensionedScalar(dimless, 1), Phi)
          ==
-            fvc::div(phi)
+            fvi::div(phi)
         );
 
         PhiEqn.setReference(PhiRefCell, PhiRefValue);
@@ -124,7 +125,7 @@ int main(int argc, char *argv[])
     }
 
     Info<< "Continuity error = "
-        << mag(fvc::div(phi))().weightedAverage(mesh.V()).value()
+        << mag(fvi::div(phi))().weightedAverage(mesh.V()).value()
         << endl;
 
     U = fvc::reconstruct(MRF.absolute(phi));
@@ -170,9 +171,9 @@ int main(int argc, char *argv[])
         // Filtering with the flow-direction generates a more reasonable
         // pressure distribution in regions of high velocity gradient in the
         // direction of the flow
-        volScalarField divDivUU
+        volInternalScalarField divDivUU
         (
-            fvc::div
+            fvi::div
             (
                 F & fvc::div(phi, U),
                 "div(div(phi,U))"
