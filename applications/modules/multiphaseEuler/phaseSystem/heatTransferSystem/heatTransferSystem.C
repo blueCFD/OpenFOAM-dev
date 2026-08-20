@@ -286,7 +286,7 @@ Foam::heatTransferSystem::heatTransfer() const
     {
         const phaseInterface interface(fluid_, modelIter.key());
 
-        const volScalarField::Internal H(modelIter()->K());
+        const volInternalScalarField H(modelIter()->K());
 
         forAllConstIter(phaseInterface, interface, iter)
         {
@@ -294,9 +294,9 @@ Foam::heatTransferSystem::heatTransfer() const
             const phaseModel& otherPhase = iter.otherPhase();
 
             const volScalarField& he = phase.thermo().he();
-            const volScalarField::Internal& Cpv(phase.thermo().Cpv());
+            const volInternalScalarField& Cpv(phase.thermo().Cpv());
 
-            const volScalarField::Internal Hstabilised
+            const volInternalScalarField Hstabilised
             (
                 iter.otherPhase()()
                /max(iter.otherPhase()(), iter.otherPhase().residualAlpha())
@@ -305,7 +305,7 @@ Foam::heatTransferSystem::heatTransfer() const
 
             eqns[phase.name()] +=
                 Hstabilised*(otherPhase.thermo().T()() - phase.thermo().T()())
-              + Hstabilised/Cpv*he - fvm::Sp(Hstabilised/Cpv, he);
+              + Hstabilised/Cpv*he() - fvm::Sp(Hstabilised/Cpv, he);
         }
     }
 
@@ -319,7 +319,7 @@ Foam::heatTransferSystem::heatTransfer() const
             sidedModelIter()->KinThe(interface.phase2())
         );
 
-        const volScalarField::Internal HEff
+        const volInternalScalarField HEff
         (
             Hs.first()()*Hs.second()()/(Hs.first()() + Hs.second()())
         );
@@ -330,13 +330,13 @@ Foam::heatTransferSystem::heatTransfer() const
             const phaseModel& otherPhase = iter.otherPhase();
 
             const volScalarField& he = phase.thermo().he();
-            const volScalarField::Internal& Cpv(phase.thermo().Cpv());
+            const volInternalScalarField& Cpv(phase.thermo().Cpv());
 
-            const volScalarField::Internal& H = Hs[iter.index()];
+            const volInternalScalarField& H = Hs[iter.index()];
 
             eqns[phase.name()] +=
                 HEff*(otherPhase.thermo().T()() - phase.thermo().T()())
-              + H/Cpv*he - fvm::Sp(H/Cpv, he);
+              + H/Cpv*he() - fvm::Sp(H/Cpv, he);
         }
     }
 

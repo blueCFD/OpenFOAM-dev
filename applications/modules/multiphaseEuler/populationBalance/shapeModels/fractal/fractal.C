@@ -132,7 +132,7 @@ Foam::populationBalance::shapeModels::fractal::fractal
         Sus_.set
         (
             i,
-            new volScalarField::Internal
+            new volInternalScalarField
             (
                 populationBalanceModel::groupFieldIo
                 (
@@ -193,7 +193,7 @@ Foam::populationBalance::shapeModels::fractal::fld(const label i) const
 }
 
 
-Foam::volScalarField::Internal&
+Foam::volInternalScalarField&
 Foam::populationBalance::shapeModels::fractal::src(const label i)
 {
     return Sus_[i];
@@ -234,9 +234,9 @@ void Foam::populationBalance::shapeModels::fractal::solve()
             fvm::ddt(alpha, fi, kappas_[i])
           + fvm::div(alphaFiPhi, kappas_[i])
          ==
-            Sus_[i] + fvm::Sp(popBal_.Sp(i)*fi, kappas_[i])
+            Sus_[i] + fvm::Sp(popBal_.Sp(i)*fi(), kappas_[i])
           + popBal_.expansionSu(i, kappas_)
-          + fvm::Sp(popBal_.expansionSp(i)*fi, kappas_[i])
+          + fvm::Sp(popBal_.expansionSp(i)*fi(), kappas_[i])
           + popBal_.modelSourceSu(i, kappas_)
           + popBal_.fluid().fvModels().source(alphaFi, rho, kappas_[i])/rho
           - correction

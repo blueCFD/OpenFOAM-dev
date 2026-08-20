@@ -36,7 +36,7 @@ License
 Foam::PtrList<Foam::fvScalarMatrix>
 Foam::solvers::multiphaseEuler::compressibilityEqns
 (
-    const PtrList<volScalarField::Internal>& dmdts
+    const PtrList<volInternalScalarField>& dmdts
 ) const
 {
     volScalarField& p_rgh = p_rgh_;
@@ -69,7 +69,7 @@ Foam::solvers::multiphaseEuler::compressibilityEqns
         // Mesh dilatation correction
         if (mesh.moving())
         {
-            pEqnComp += fvi::div(mesh.phi())*alpha;
+            pEqnComp += fvi::div(mesh.phi())*alpha();
         }
 
         // Compressibility
@@ -113,7 +113,7 @@ Foam::solvers::multiphaseEuler::compressibilityEqns
         // Mass transfer
         if (dmdts.set(phasei))
         {
-            pEqnComp -= dmdts[phasei]/rho;
+            pEqnComp -= dmdts[phasei]/rho();
         }
     }
 

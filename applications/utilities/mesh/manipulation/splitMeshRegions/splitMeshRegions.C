@@ -1021,7 +1021,7 @@ void matchRegions
                 nCellsInZone[cellRegion[celli]]++;
             }
         }
-        Pstream::listCombineGather(nCellsInZone, plusEqOp());
+        Pstream::listCombineGather(nCellsInZone, addEqOp());
         Pstream::listCombineScatter(nCellsInZone);
 
         // Pick the region with largest overlap of the zone
@@ -1143,7 +1143,7 @@ void writeCellToRegion(const fvMesh& mesh, const labelList& cellRegion)
 
     // Write for post processing
     {
-        volScalarField::Internal cellToRegion
+        volInternalScalarField cellToRegion
         (
             IOobject
             (
@@ -1164,7 +1164,7 @@ void writeCellToRegion(const fvMesh& mesh, const labelList& cellRegion)
         cellToRegion.write();
 
         Info<< "Writing region index per cell as a "
-            << volScalarField::Internal::typeName << " to "
+            << volInternalScalarField::typeName << " to "
             << cellToRegion.relativeObjectPath() << nl << endl;
     }
 }

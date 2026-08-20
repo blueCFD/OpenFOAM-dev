@@ -111,8 +111,8 @@ Foam::functionObjects::adjustTimeStepToNucleation::maxDeltaT() const
     {
         bool found = false;
 
-        tmp<volScalarField::Internal> tTau =
-            volScalarField::Internal::New
+        tmp<volInternalScalarField> tTau =
+            volInternalScalarField::New
             (
                 typedName("tau"),
                 mesh(),
@@ -139,14 +139,14 @@ Foam::functionObjects::adjustTimeStepToNucleation::maxDeltaT() const
                 << exit(FatalError);
         }
 
-        return gMin(tTau());
+        return gMin(tTau()).value();
     }
     else
     {
         const fv::nucleation& nucleationModel =
             refCast<const fv::nucleation>(fvModels[modelName_]);
 
-        return gMin(nucleationModel.tau()());
+        return gMin(nucleationModel.tau()()).value();
     }
 }
 

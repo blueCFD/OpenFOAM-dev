@@ -168,8 +168,8 @@ void Foam::phaseSystem::solve
         }
     }
 
-    PtrList<volScalarField::Internal> Sps(phases().size());
-    PtrList<volScalarField::Internal> Sus(phases().size());
+    PtrList<volInternalScalarField> Sps(phases().size());
+    PtrList<volInternalScalarField> Sus(phases().size());
 
     forAll(movingPhases(), movingPhasei)
     {
@@ -180,7 +180,7 @@ void Foam::phaseSystem::solve
         Sps.set
         (
             phasei,
-            new volScalarField::Internal
+            new volInternalScalarField
             (
                 IOobject
                 (
@@ -196,7 +196,7 @@ void Foam::phaseSystem::solve
         Sus.set
         (
             phasei,
-            new volScalarField::Internal
+            new volInternalScalarField
             (
                 IOobject::groupName("Su", phase.name()),
                 min(alpha(), scalar(1))
@@ -207,9 +207,9 @@ void Foam::phaseSystem::solve
         if (dilatation)
         {
             // Construct the dilatation rate source term
-            volScalarField::Internal vDot
+            volInternalScalarField vDot
             (
-                volScalarField::Internal::New
+                volInternalScalarField::New
                 (
                     "vDot",
                     mesh_,
@@ -236,8 +236,8 @@ void Foam::phaseSystem::solve
                 }
             }
 
-            volScalarField::Internal& Sp = Sps[phasei];
-            volScalarField::Internal& Su = Sus[phasei];
+            volInternalScalarField& Sp = Sps[phasei];
+            volInternalScalarField& Su = Sus[phasei];
 
             forAll(vDot, celli)
             {
@@ -366,7 +366,7 @@ void Foam::phaseSystem::solve
                 );
 
                 Info<< phase.name() << " predicted fraction, min, max = "
-                    << phase.weightedAverage(mesh_.Vsc()).value()
+                    << weightedAverage(phase, mesh_.Vsc()()).value()
                     << ' ' << min(phase).value()
                     << ' ' << max(phase).value()
                     << endl;
@@ -782,7 +782,7 @@ void Foam::phaseSystem::solve
                 const phaseModel& phase = solvePhases[solvePhasei];
 
                 Info<< phase.name() << " fraction, min, max = "
-                    << phase.weightedAverage(mesh_.Vsc()).value()
+                    << weightedAverage(phase, mesh_.Vsc()()).value()
                     << ' ' << min(phase).value()
                     << ' ' << max(phase).value()
                     << endl;
@@ -802,7 +802,7 @@ void Foam::phaseSystem::solve
             }
             else
             {
-                volScalarField::Internal sumAlphaMoving
+                volInternalScalarField sumAlphaMoving
                 (
                     IOobject
                     (
@@ -820,8 +820,11 @@ void Foam::phaseSystem::solve
                 }
 
                 Info<< "Phase-sum volume fraction, min, max = "
-                    << (sumAlphaMoving + 1 - alphaVoid())()
-                      .weightedAverage(mesh_.Vsc()).value()
+                    << weightedAverage
+                       (
+                           eval(sumAlphaMoving + 1 - alphaVoid())(),
+                           mesh_.Vsc()()
+                       ).value()
                     << ' ' << min(sumAlphaMoving + 1 - alphaVoid()).value()
                     << ' ' << max(sumAlphaMoving + 1 - alphaVoid()).value()
                     << endl;

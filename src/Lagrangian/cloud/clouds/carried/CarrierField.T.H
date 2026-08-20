@@ -40,6 +40,7 @@ SourceFiles
 #define CarrierField_H
 
 #include "CloudDerivedField.T.H"
+#include "volFields.H"
 #include "interpolation.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

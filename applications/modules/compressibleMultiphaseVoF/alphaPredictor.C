@@ -123,7 +123,7 @@ void Foam::solvers::compressibleMultiphaseVoF::alphaSolve()
 
         surfaceScalarField& alphaPhi = alphaPhis[phasei];
 
-        volScalarField::Internal Sp
+        volInternalScalarField Sp
         (
             IOobject
             (
@@ -135,7 +135,7 @@ void Foam::solvers::compressibleMultiphaseVoF::alphaSolve()
             dimensionedScalar(alpha.vDot().dimensions(), 0)
         );
 
-        volScalarField::Internal Su
+        volInternalScalarField Su
         (
             IOobject
             (
@@ -200,7 +200,7 @@ void Foam::solvers::compressibleMultiphaseVoF::alphaSolve()
         rhoPhi += fvc::interpolate(alpha.thermo().rho())*alphaPhi;
 
         Info<< alpha.name() << " volume fraction, min, max = "
-            << alpha.weightedAverage(mesh.V()).value()
+            << weightedAverage(alpha, mesh.V()).value()
             << ' ' << min(alpha).value()
             << ' ' << max(alpha).value()
             << endl;

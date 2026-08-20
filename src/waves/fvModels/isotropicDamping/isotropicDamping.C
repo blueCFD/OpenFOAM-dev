@@ -58,7 +58,7 @@ void Foam::fv::isotropicDamping::readCoeffs(const dictionary& dict)
 
 void Foam::fv::isotropicDamping::add
 (
-    const volScalarField::Internal& forceCoeff,
+    const volInternalScalarField& forceCoeff,
     fvMatrix<vector>& eqn
 ) const
 {
@@ -111,7 +111,7 @@ void Foam::fv::isotropicDamping::addSup
     fvMatrix<vector>& eqn
 ) const
 {
-    add(rho*this->forceCoeff(), eqn);
+    add(rho()*this->forceCoeff(), eqn);
 }
 
 

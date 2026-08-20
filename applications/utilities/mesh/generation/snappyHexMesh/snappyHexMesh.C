@@ -397,7 +397,7 @@ void extractSurface
         patchSize.insert(pp.name(), pp.size());
         nFaces += pp.size();
     }
-    Pstream::mapCombineGather(patchSize, plusEqOp());
+    Pstream::mapCombineGather(patchSize, addEqOp());
 
 
     // Allocate zone/patch for all patches

@@ -300,6 +300,11 @@ public:
                 return psi_;
             }
 
+            const fvMesh& mesh() const
+            {
+                return psi_.mesh();
+            }
+
             const dimensionSet& dimensions() const
             {
                 return dimensions_;
@@ -441,7 +446,7 @@ public:
             tmp<VolInternalField<Type>> Su() const;
 
             //- Return the implicit source
-            tmp<volScalarField::Internal> Sp() const;
+            tmp<volInternalScalarField> Sp() const;
 
             //- Return the H operation source
             tmp<VolField<Type>> H() const;
@@ -471,10 +476,16 @@ public:
         (
             const DimensionedField<Type, fvMesh>&
         );
+
+        //- Assign-add an expression
+        template<class Expression, class = EnableIfExpression<Expression>>
+        void operator+=(const Expression& e);
+
         void operator+=
         (
             const tmp<DimensionedField<Type, fvMesh>>&
         );
+
         void operator+=
         (
             const tmp<VolField<Type>>&
@@ -484,10 +495,16 @@ public:
         (
             const DimensionedField<Type, fvMesh>&
         );
+
+        //- Assign-subtract an expression
+        template<class Expression, class = EnableIfExpression<Expression>>
+        void operator-=(const Expression& e);
+
         void operator-=
         (
             const tmp<DimensionedField<Type, fvMesh>>&
         );
+
         void operator-=
         (
             const tmp<VolField<Type>>&
@@ -499,13 +516,23 @@ public:
         void operator+=(const zero&);
         void operator-=(const zero&);
 
-        void operator*=(const volScalarField::Internal&);
-        void operator*=(const tmp<volScalarField::Internal>&);
+        void operator*=(const volInternalScalarField&);
+
+        //- Assign-multiply by an expression
+        template<class Expression, class = EnableIfExpression<Expression>>
+        void operator*=(const Expression& e);
+
+        void operator*=(const tmp<volInternalScalarField>&);
         void operator*=(const tmp<volScalarField>&);
         void operator*=(const dimensioned<scalar>&);
 
-        void operator/=(const volScalarField::Internal&);
-        void operator/=(const tmp<volScalarField::Internal>&);
+        void operator/=(const volInternalScalarField&);
+
+        //- Assign-divide by an expression
+        template<class Expression, class = EnableIfExpression<Expression>>
+        void operator/=(const Expression& e);
+
+        void operator/=(const tmp<volInternalScalarField>&);
         void operator/=(const tmp<volScalarField>&);
         void operator/=(const dimensioned<scalar>&);
 
@@ -551,6 +578,16 @@ public:
 };
 
 
+namespace expression
+{
+    template<class Type>
+    struct Expressionable<fvMatrix<Type>>
+    :
+        public notExpressionable
+    {};
+}
+
+
 // * * * * * * * * * * * * * * * Global functions  * * * * * * * * * * * * * //
 
 template<class Type>
@@ -573,7 +610,15 @@ template<class Type>
 void checkMethod
 (
     const fvMatrix<Type>&,
-    const dimensioned<Type>&,
+    const dimensioned<Type>& dt,
+    const char*
+);
+
+template<class Type, class Expression, class = EnableIfExpression<Expression>>
+void checkMethod
+(
+    const fvMatrix<Type>&,
+    const Expression&,
     const char*
 );
 
@@ -653,6 +698,18 @@ tmp<fvMatrix<Type>> operator==
     const DimensionedField<Type, fvMesh>&
 );
 
+template
+<
+    class Type,
+    class Expression,
+    class = EnableIfExpression<Expression>
+>
+tmp<fvMatrix<Type>> operator==
+(
+    const fvMatrix<Type>&,
+    const Expression& e
+);
+
 template<class Type>
 tmp<fvMatrix<Type>> operator==
 (
@@ -672,6 +729,18 @@ tmp<fvMatrix<Type>> operator==
 (
     const tmp<fvMatrix<Type>>&,
     const DimensionedField<Type, fvMesh>&
+);
+
+template
+<
+    class Type,
+    class Expression,
+    class = EnableIfExpression<Expression>
+>
+tmp<fvMatrix<Type>> operator==
+(
+    const tmp<fvMatrix<Type>>&,
+    const Expression& e
 );
 
 template<class Type>
@@ -767,6 +836,18 @@ tmp<fvMatrix<Type>> operator+
     const DimensionedField<Type, fvMesh>&
 );
 
+template
+<
+    class Type,
+    class Expression,
+    class = EnableIfExpression<Expression>
+>
+tmp<fvMatrix<Type>> operator+
+(
+    const fvMatrix<Type>&,
+    const Expression& e
+);
+
 template<class Type>
 tmp<fvMatrix<Type>> operator+
 (
@@ -788,6 +869,18 @@ tmp<fvMatrix<Type>> operator+
     const DimensionedField<Type, fvMesh>&
 );
 
+template
+<
+    class Type,
+    class Expression,
+    class = EnableIfExpression<Expression>
+>
+tmp<fvMatrix<Type>> operator+
+(
+    const tmp<fvMatrix<Type>>&,
+    const Expression& e
+);
+
 template<class Type>
 tmp<fvMatrix<Type>> operator+
 (
@@ -809,6 +902,18 @@ tmp<fvMatrix<Type>> operator+
     const fvMatrix<Type>&
 );
 
+template
+<
+    class Type,
+    class Expression,
+    class = EnableIfExpression<Expression>
+>
+tmp<fvMatrix<Type>> operator+
+(
+    const Expression& e,
+    const fvMatrix<Type>&
+);
+
 template<class Type>
 tmp<fvMatrix<Type>> operator+
 (
@@ -830,6 +935,18 @@ tmp<fvMatrix<Type>> operator+
     const tmp<fvMatrix<Type>>&
 );
 
+template
+<
+    class Type,
+    class Expression,
+    class = EnableIfExpression<Expression>
+>
+tmp<fvMatrix<Type>> operator+
+(
+    const Expression& e,
+    const tmp<fvMatrix<Type>>&
+);
+
 template<class Type>
 tmp<fvMatrix<Type>> operator+
 (
@@ -901,7 +1018,6 @@ tmp<fvMatrix<Type>> operator-
     const tmp<fvMatrix<Type>>&,
     const tmp<fvMatrix<Type>>&
 );
-
 
 template<class Type>
 tmp<fvMatrix<Type>> operator-
@@ -910,6 +1026,18 @@ tmp<fvMatrix<Type>> operator-
     const DimensionedField<Type, fvMesh>&
 );
 
+template
+<
+    class Type,
+    class Expression,
+    class = EnableIfExpression<Expression>
+>
+tmp<fvMatrix<Type>> operator-
+(
+    const fvMatrix<Type>&,
+    const Expression& e
+);
+
 template<class Type>
 tmp<fvMatrix<Type>> operator-
 (
@@ -931,6 +1059,18 @@ tmp<fvMatrix<Type>> operator-
     const DimensionedField<Type, fvMesh>&
 );
 
+template
+<
+    class Type,
+    class Expression,
+    class = EnableIfExpression<Expression>
+>
+tmp<fvMatrix<Type>> operator-
+(
+    const tmp<fvMatrix<Type>>&,
+    const Expression& e
+);
+
 template<class Type>
 tmp<fvMatrix<Type>> operator-
 (
@@ -952,6 +1092,18 @@ tmp<fvMatrix<Type>> operator-
     const fvMatrix<Type>&
 );
 
+template
+<
+    class Type,
+    class Expression,
+    class = EnableIfExpression<Expression>
+>
+tmp<fvMatrix<Type>> operator-
+(
+    const Expression& e,
+    const fvMatrix<Type>&
+);
+
 template<class Type>
 tmp<fvMatrix<Type>> operator-
 (
@@ -970,6 +1122,18 @@ template<class Type>
 tmp<fvMatrix<Type>> operator-
 (
     const DimensionedField<Type, fvMesh>&,
+    const tmp<fvMatrix<Type>>&
+);
+
+template
+<
+    class Type,
+    class Expression,
+    class = EnableIfExpression<Expression>
+>
+tmp<fvMatrix<Type>> operator-
+(
+    const Expression& e,
     const tmp<fvMatrix<Type>>&
 );
 
@@ -1020,71 +1184,26 @@ tmp<fvMatrix<Type>> operator-
 template<class Type>
 tmp<fvMatrix<Type>> operator*
 (
-    const volScalarField::Internal&,
+    const volInternalScalarField&,
+    const fvMatrix<Type>&
+);
+
+template
+<
+    class Type,
+    class Expression,
+    class = EnableIfExpression<Expression>
+>
+tmp<fvMatrix<Type>> operator*
+(
+    const Expression& e,
     const fvMatrix<Type>&
 );
 
 template<class Type>
 tmp<fvMatrix<Type>> operator*
 (
-    const tmp<volScalarField::Internal>&,
-    const fvMatrix<Type>&
-);
-
-template<class Type>
-tmp<fvMatrix<Type>> operator*
-(
-    const tmp<volScalarField>&,
-    const fvMatrix<Type>&
-);
-
-template<class Type>
-tmp<fvMatrix<Type>> operator*
-(
-    const volScalarField::Internal&,
-    const tmp<fvMatrix<Type>>&
-);
-
-template<class Type>
-tmp<fvMatrix<Type>> operator*
-(
-    const tmp<volScalarField::Internal>&,
-    const tmp<fvMatrix<Type>>&
-);
-
-template<class Type>
-tmp<fvMatrix<Type>> operator*
-(
-    const tmp<volScalarField>&,
-    const tmp<fvMatrix<Type>>&
-);
-
-
-template<class Type>
-tmp<fvMatrix<Type>> operator*
-(
-    const dimensioned<scalar>&,
-    const fvMatrix<Type>&
-);
-
-template<class Type>
-tmp<fvMatrix<Type>> operator*
-(
-    const dimensioned<scalar>&,
-    const tmp<fvMatrix<Type>>&
-);
-
-template<class Type>
-tmp<fvMatrix<Type>> operator*
-(
-    const volScalarField::Internal&,
-    const fvMatrix<Type>&
-);
-
-template<class Type>
-tmp<fvMatrix<Type>> operator*
-(
-    const tmp<volScalarField::Internal>&,
+    const tmp<volInternalScalarField>&,
     const fvMatrix<Type>&
 );
 
@@ -1098,14 +1217,26 @@ tmp<fvMatrix<Type>> operator*
 template<class Type>
 tmp<fvMatrix<Type>> operator*
 (
-    const volScalarField::Internal&,
+    const volInternalScalarField&,
+    const tmp<fvMatrix<Type>>&
+);
+
+template
+<
+    class Type,
+    class Expression,
+    class = EnableIfExpression<Expression>
+>
+tmp<fvMatrix<Type>> operator*
+(
+    const Expression& e,
     const tmp<fvMatrix<Type>>&
 );
 
 template<class Type>
 tmp<fvMatrix<Type>> operator*
 (
-    const tmp<volScalarField::Internal>&,
+    const tmp<volInternalScalarField>&,
     const tmp<fvMatrix<Type>>&
 );
 
@@ -1115,7 +1246,6 @@ tmp<fvMatrix<Type>> operator*
     const tmp<volScalarField>&,
     const tmp<fvMatrix<Type>>&
 );
-
 
 template<class Type>
 tmp<fvMatrix<Type>> operator*
@@ -1136,14 +1266,26 @@ template<class Type>
 tmp<fvMatrix<Type>> operator/
 (
     const fvMatrix<Type>&,
-    const volScalarField::Internal&
+    const volInternalScalarField&
+);
+
+template
+<
+    class Type,
+    class Expression,
+    class = EnableIfExpression<Expression>
+>
+tmp<fvMatrix<Type>> operator/
+(
+    const fvMatrix<Type>&,
+    const Expression& e
 );
 
 template<class Type>
 tmp<fvMatrix<Type>> operator/
 (
     const fvMatrix<Type>&,
-    const tmp<volScalarField::Internal>&
+    const tmp<volInternalScalarField>&
 );
 
 template<class Type>
@@ -1157,14 +1299,26 @@ template<class Type>
 tmp<fvMatrix<Type>> operator/
 (
     const tmp<fvMatrix<Type>>&,
-    const volScalarField::Internal&
+    const volInternalScalarField&
+);
+
+template
+<
+    class Type,
+    class Expression,
+    class = EnableIfExpression<Expression>
+>
+tmp<fvMatrix<Type>> operator/
+(
+    const tmp<fvMatrix<Type>>&,
+    const Expression& e
 );
 
 template<class Type>
 tmp<fvMatrix<Type>> operator/
 (
     const tmp<fvMatrix<Type>>&,
-    const tmp<volScalarField::Internal>&
+    const tmp<volInternalScalarField>&
 );
 
 template<class Type>

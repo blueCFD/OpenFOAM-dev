@@ -378,7 +378,7 @@ void Foam::functionObjects::scalarTransport::subCycleMULES()
         sEqn.solve(controls.subDict("diffusivity"));
 
         Info<< fieldName_ << " volume fraction = "
-            << s_.weightedAverage(mesh_.V()).value()
+            << weightedAverage(s_, mesh_.V()).value()
             << "  Min(" << fieldName_ << ") = " << min(s_).value()
             << "  Max(" << fieldName_ << ") = " << max(s_).value()
             << endl;
@@ -507,7 +507,7 @@ void Foam::functionObjects::scalarTransport::solveMULES()
 
         if (ocCoeff > 0)
         {
-            const volScalarField::Internal Co
+            const volInternalScalarField Co
             (
                 (0.5*time_.deltaT())*fvi::surfaceSum(mag(phi))/mesh_.V()
             );
@@ -519,7 +519,7 @@ void Foam::functionObjects::scalarTransport::solveMULES()
                     volScalarField::New
                     (
                         "cnBDCoeff",
-                        max(cnCoeff, 1.0 - 1.0/max(Co, scalar(2))),
+                        eval(max(cnCoeff, 1.0 - 1.0/max(Co, scalar(2)))),
                         zeroGradientFvPatchField<scalar>::typeName
                     )
                 )
@@ -560,7 +560,7 @@ void Foam::functionObjects::scalarTransport::solveMULES()
         sEqn.solve();
 
         Info<< fieldName_ << " volume fraction = "
-            << s_.weightedAverage(mesh_.Vsc()).value()
+            << weightedAverage(s_(), mesh_.Vsc()()).value()
             << "  Min(" << fieldName_ << ") = " << min(s_).value()
             << "  Max(" << fieldName_ << ") = " << max(s_).value()
             << endl;
@@ -663,7 +663,7 @@ void Foam::functionObjects::scalarTransport::solveMULES()
     }
 
     Info<< fieldName_ << "volume fraction = "
-        << s_.weightedAverage(mesh_.Vsc()).value()
+        << weightedAverage(s_(), mesh_.Vsc()()).value()
         << "  Min(" << fieldName_ << ") = " << min(s_).value()
         << "  Max(" << fieldName_ << ") = " << max(s_).value()
         << endl;

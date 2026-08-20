@@ -195,10 +195,10 @@ void Foam::reactionModels::EDC::correct()
 }
 
 
-Foam::tmp<Foam::volScalarField::Internal>
+Foam::tmp<Foam::volInternalScalarField>
 Foam::reactionModels::EDC::R(const label speciei) const
 {
-    return kappa_*chemistryPtr_->RR()[speciei];
+    return kappa_()*chemistryPtr_->RR()[speciei];
 }
 
 

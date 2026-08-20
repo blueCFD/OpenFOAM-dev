@@ -36,7 +36,7 @@ SourceFiles
 #define GeometricSymmTensorField_H
 
 #include "GeometricField.T.H"
-#include "DimensionedSymmTensorField.T.H"
+#include "symmTensorField.H"
 
 #define TEMPLATE                                                               \
     template                                                                   \

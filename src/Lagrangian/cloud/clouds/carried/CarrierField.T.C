@@ -25,7 +25,6 @@ License
 
 #include "CarrierField.T.H"
 #include "carried.H"
-#include "volFields.H"
 
 /*---------------------------------------------------------------------------*\
                   Class CloudDerivedField::Functor Declaration

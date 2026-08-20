@@ -49,15 +49,15 @@ namespace functionObjects
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField::Internal>
+Foam::tmp<Foam::volInternalScalarField>
 Foam::functionObjects::CourantNo::byRho
 (
-    const tmp<volScalarField::Internal>& Co
+    const tmp<volInternalScalarField>& Co
 ) const
 {
     if (Co().dimensions() == dimensions::density)
     {
-        return Co/obr_.lookupObject<volScalarField>(rhoName_);
+        return Co/obr_.lookupObject<volInternalScalarField>(rhoName_);
     }
     else
     {

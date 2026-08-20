@@ -161,17 +161,17 @@ Foam::diameterModels::populationBalance::Av() const
 }
 
 
-Foam::tmp<Foam::volScalarField::Internal>
+Foam::tmp<Foam::volInternalScalarField>
 Foam::diameterModels::populationBalance::fSum() const
 {
-    tmp<volScalarField::Internal> tsumFi =
-        volScalarField::Internal::New
+    tmp<volInternalScalarField> tsumFi =
+        volInternalScalarField::New
         (
             "sumFi",
             phase().mesh(),
             dimensionedScalar(dimless, 0)
         );
-    volScalarField::Internal& sumFi = tsumFi.ref();
+    volInternalScalarField& sumFi = tsumFi.ref();
 
     const populationBalanceModel& popBal = this->popBal();
 
@@ -223,7 +223,7 @@ void Foam::diameterModels::populationBalance::correct()
     d_ = 6*sumFi/tsumFiAbyV;
 
     Info<< indent << phase().name() << " min/Sauter-mean/max diameter = "
-        << min(d_).value() << '/' << d_.weightedAverage(d_.mesh().V()).value()
+        << min(d_).value() << '/' << weightedAverage(d_, d_.mesh().V()).value()
         << '/' << max(d_).value() << endl;
 }
 

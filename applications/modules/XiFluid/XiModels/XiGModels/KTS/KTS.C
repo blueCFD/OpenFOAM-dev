@@ -75,9 +75,9 @@ Foam::XiGModels::KTS::~KTS()
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField::Internal> Foam::XiGModels::KTS::G() const
+Foam::tmp<Foam::volInternalScalarField> Foam::XiGModels::KTS::G() const
 {
-    const volScalarField::Internal epsilon
+    const volInternalScalarField epsilon
     (
         max
         (
@@ -88,7 +88,14 @@ Foam::tmp<Foam::volScalarField::Internal> Foam::XiGModels::KTS::G() const
 
     return
         Geta_
-       /sqrt(mag(thermo_.uThermo().mu()()/(thermo_.uThermo().rho()()*epsilon)));
+       /sqrt
+        (
+            mag
+            (
+                thermo_.uThermo().mu()()
+               /(thermo_.uThermo().rho()()()*epsilon)
+            )
+        );
 }
 
 

@@ -26,7 +26,7 @@ License
 #include "forcing.H"
 #include "fvMatrix.H"
 #include "fviGrad.H"
-#include "fvcVolumeIntegrate.H"
+#include "fviVolumeIntegrate.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -153,8 +153,8 @@ Foam::dimensionedScalar Foam::fv::forcing::regionLength() const
 
         const volScalarField scale(scale_->value(x));
 
-        vs += fvc::domainIntegrate(scale);
-        vgrads += fvc::domainIntegrate(directions_[i] & fvi::grad(scale));
+        vs += fvi::domainIntegrate(scale);
+        vgrads += fvi::domainIntegrate(directions_[i] & fvi::grad(scale));
     }
 
     return vs/vgrads;
@@ -162,11 +162,11 @@ Foam::dimensionedScalar Foam::fv::forcing::regionLength() const
 
 
 
-Foam::tmp<Foam::volScalarField::Internal> Foam::fv::forcing::scale() const
+Foam::tmp<Foam::volInternalScalarField> Foam::fv::forcing::scale() const
 {
-    tmp<volScalarField::Internal> tscale
+    tmp<volInternalScalarField> tscale
     (
-        volScalarField::Internal::New
+        volInternalScalarField::New
         (
             typedName("scale"),
             mesh(),
@@ -174,27 +174,27 @@ Foam::tmp<Foam::volScalarField::Internal> Foam::fv::forcing::scale() const
         )
     );
 
-    volScalarField::Internal& scale = tscale.ref();
+    volInternalScalarField& scale = tscale.ref();
 
     forAll(origins_, i)
     {
         const dimensionedVector o(dimLength, origins_[i]);
         const dimensionedVector d(dimless, directions_[i]);
-        scale = max(scale, scale_->value((mesh().C()() - o) & d));
+        scale = max(scale, scale_->value(eval((mesh().C()() - o) & d)));
     }
 
     return tscale;
 }
 
 
-Foam::tmp<Foam::volScalarField::Internal> Foam::fv::forcing::forceCoeff() const
+Foam::tmp<Foam::volInternalScalarField> Foam::fv::forcing::forceCoeff() const
 {
-    tmp<volScalarField::Internal> tscale(this->scale());
-    const volScalarField::Internal& scale = tscale();
+    tmp<volInternalScalarField> tscale(this->scale());
+    const volInternalScalarField& scale = tscale();
 
-    tmp<volScalarField::Internal> tforceCoeff
+    tmp<volInternalScalarField> tforceCoeff
     (
-        volScalarField::Internal::New(typedName("forceCoeff"), lambda_*scale)
+        volInternalScalarField::New(typedName("forceCoeff"), lambda_*scale)
     );
 
     // Damp the cells adjacent to the boundary with lambdaBoundary if specified

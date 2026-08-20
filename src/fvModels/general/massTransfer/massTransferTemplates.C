@@ -104,9 +104,9 @@ void Foam::fv::massTransfer::addSupType
         // If a corresponding field exists then transfer its value
         if (!isNull(otherField))
         {
-            const volScalarField::Internal S(this->S(field.name())/rho(i));
+            const volInternalScalarField S(this->S(field.name())/rho(i));
 
-            eqn += posPart(S)*otherField;
+            eqn += posPart(S)*otherField();
 
             if (&field == &eqn.psi())
             {
@@ -114,7 +114,7 @@ void Foam::fv::massTransfer::addSupType
             }
             else
             {
-                eqn += negPart(S)*field;
+                eqn += negPart(S)*field();
             }
         }
         // Otherwise, get the base class to create the source. This will
@@ -184,9 +184,9 @@ void Foam::fv::massTransfer::addSupType
         // If a corresponding field exists then transfer its value
         if (!isNull(otherField))
         {
-            const volScalarField::Internal S(this->S(field.name()));
+            const volInternalScalarField S(this->S(field.name()));
 
-            eqn += posPart(S)*otherField;
+            eqn += posPart(S)*otherField();
 
             if (&field == &eqn.psi())
             {
@@ -194,7 +194,7 @@ void Foam::fv::massTransfer::addSupType
             }
             else
             {
-                eqn += negPart(S)*field;
+                eqn += negPart(S)*field();
             }
         }
         // Otherwise, get the base class to create the source. This will
