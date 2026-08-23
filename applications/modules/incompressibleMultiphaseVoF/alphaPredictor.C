@@ -84,7 +84,7 @@ void Foam::solvers::incompressibleMultiphaseVoF::alphaSolve()
         MULES::limit
         (
             MULEScontrols,
-            1.0/mesh.time().deltaT().value(),
+            1/mesh.time().deltaT().value(),
             geometricOneField(),
             alpha,
             phi,
@@ -128,7 +128,7 @@ void Foam::solvers::incompressibleMultiphaseVoF::alphaSolve()
         rhoPhi += alphaPhi*alpha.rho();
 
         Info<< alpha.name() << " volume fraction, min, max = "
-            << weightedAverage(alpha, mesh.V()).value()
+            << weightedAverage(alpha(), mesh.V()).value()
             << ' ' << min(alpha).value()
             << ' ' << max(alpha).value()
             << endl;
@@ -137,7 +137,7 @@ void Foam::solvers::incompressibleMultiphaseVoF::alphaSolve()
     }
 
     Info<< "Phase-sum volume fraction, min, max = "
-        << weightedAverage(sumAlpha, mesh.V()).value()
+        << weightedAverage(sumAlpha(), mesh.V()).value()
         << ' ' << min(sumAlpha).value()
         << ' ' << max(sumAlpha).value()
         << endl;

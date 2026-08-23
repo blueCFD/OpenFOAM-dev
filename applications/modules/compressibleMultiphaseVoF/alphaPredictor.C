@@ -86,7 +86,7 @@ void Foam::solvers::compressibleMultiphaseVoF::alphaSolve()
         MULES::limit
         (
             MULEScontrols,
-            1.0/mesh.time().deltaT().value(),
+            1/mesh.time().deltaT().value(),
             geometricOneField(),
             alpha,
             phi,
@@ -200,7 +200,7 @@ void Foam::solvers::compressibleMultiphaseVoF::alphaSolve()
         rhoPhi += fvc::interpolate(alpha.thermo().rho())*alphaPhi;
 
         Info<< alpha.name() << " volume fraction, min, max = "
-            << weightedAverage(alpha, mesh.V()).value()
+            << weightedAverage(alpha(), mesh.V()).value()
             << ' ' << min(alpha).value()
             << ' ' << max(alpha).value()
             << endl;

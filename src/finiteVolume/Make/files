@@ -605,6 +605,7 @@ $(MRF)/MRFZone.T.C
 $(MRF)/MRFZones.T.C
 $(MRF)/derivedFvPatchFields/MRFPatchField/MRFPatchField.C
 $(MRF)/derivedFvPatchFields/MRFnoSlip/MRFnoSlipFvPatchVectorField.C
+$(MRF)/derivedFvPatchFields/MRFstaticNoSlip/MRFstaticNoSlipFvPatchVectorField.C
 $(MRF)/derivedFvPatchFields/MRFslip/MRFslipFvPatchVectorField.C
 $(MRF)/derivedFvPatchFields/MRFFreestreamVelocity/MRFFreestreamVelocityFvPatchVectorField.C
 

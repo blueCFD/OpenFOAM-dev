@@ -825,6 +825,5 @@ Foam::Ostream& Foam::operator<<(Ostream& os, const tmp<Field<Type>>& tf)
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "FieldFunctions.T.C"
-#include "FieldReductionFunctions.T.C"
 
 // ************************************************************************* //

@@ -1050,6 +1050,5 @@ COMPUTED_ASSIGNMENT(scalar, /=)
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "DimensionedFieldIO.T.C"
-#include "DimensionedFieldFunctions.T.C"
 
 // ************************************************************************* //

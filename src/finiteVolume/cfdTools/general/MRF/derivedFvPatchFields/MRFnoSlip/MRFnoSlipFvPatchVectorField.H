@@ -52,7 +52,7 @@ Usage
     \endverbatim
 
 See also
-    Foam::MRFPatchField
+    Foam::MRFstaticNoSlip
     Foam::MRFZone
     Foam::noSlip
 

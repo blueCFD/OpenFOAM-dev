@@ -431,7 +431,6 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "FieldFunctions.T.H"
-#include "FieldReductionFunctions.T.H"
 #include "FieldExpression.T.H"
 #include "scalarField.H"
 
