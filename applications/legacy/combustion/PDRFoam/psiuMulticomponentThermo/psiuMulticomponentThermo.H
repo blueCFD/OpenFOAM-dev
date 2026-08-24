@@ -303,7 +303,7 @@ public:
         ) const;
 
         //- Get the slicer for the given source
-        inline PtrList<scalarField> Yslicer
+        inline FieldListAndSlicer<scalar> Yslicer
         (
             const fvSource& model,
             const scalarField& source,
@@ -313,7 +313,7 @@ public:
         //- Get the composition of a source cell
         inline scalarFieldListSlice sourceCellComposition
         (
-            const PtrList<scalarField>& Yslicer,
+            const FieldListAndSlicer<scalar>& Yslicer,
             const label i
         ) const;
 };

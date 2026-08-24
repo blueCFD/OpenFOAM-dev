@@ -16,7 +16,7 @@ FoamFile
 
 bubbles
 {
-    type        parcelCloud;
+    type        multicomponentParcelCloud;
     libs        ("libLagrangianCloud.so");
 }
 
