@@ -47,6 +47,7 @@ Description
 
 #include "expressionResult.H"
 #include "Pstream.T.H"
+#include "Tuple2.T.H"
 #include <numeric>
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

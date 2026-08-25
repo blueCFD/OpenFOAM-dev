@@ -50,26 +50,6 @@ SourceFiles
 namespace Foam
 {
 
-// Forward declaration of friend functions and operators
-
-template<class Type, class GeoMesh, template<class> class PrimitiveField>
-class DimensionedField;
-
-template<class Type, class GeoMesh, template<class> class PrimitiveField>
-Ostream& operator<<
-(
-    Ostream&,
-    const DimensionedField<Type, GeoMesh, PrimitiveField>&
-);
-
-template<class Type, class GeoMesh, template<class> class PrimitiveField>
-Ostream& operator<<
-(
-    Ostream&,
-    const tmp<DimensionedField<Type, GeoMesh, PrimitiveField>>&
-);
-
-
 /*---------------------------------------------------------------------------*\
                       Class DimensionedField Declaration
 \*---------------------------------------------------------------------------*/
@@ -413,11 +393,8 @@ public:
         //- Use old-time methods from the base class
         USING_OLD_TIME_FIELD(DimensionedField);
 
-        //- Return a component field of the field
-        tmp<DimensionedField<cmptType, GeoMesh, Field>> component
-        (
-            const direction
-        ) const;
+        //- Return a component field expression of the field
+        auto component(const direction&) const;
 
         //- Replace a component field of the field
         template<template<class> class PrimitiveField2>
@@ -435,8 +412,9 @@ public:
             const tmp<DimensionedField<cmptType, GeoMesh, PrimitiveField2>>&
         );
 
-        //- Return the field transpose (only defined for second rank tensors)
-        tmp<DimensionedField<Type, GeoMesh, Field>> T() const;
+        //- Return the field transpose expression
+        //  (only defined for second rank tensors)
+        auto T() const;
 
         //- Reset the field values to the given field
         //  Used for mesh to mesh mapping
@@ -508,22 +486,6 @@ public:
         void operator=(const zero&);
 
         template<template<class> class PrimitiveField2>
-        void operator==
-        (
-            const DimensionedField<Type, GeoMesh, PrimitiveField2>&
-        );
-
-        template<template<class> class PrimitiveField2>
-        void operator==
-        (
-            const tmp<DimensionedField<Type, GeoMesh, PrimitiveField2>>&
-        );
-
-        void operator==(const dimensioned<Type>&);
-
-        void operator==(const zero&);
-
-        template<template<class> class PrimitiveField2>
         void operator+=
         (
             const DimensionedField<Type, GeoMesh, PrimitiveField2>&
@@ -534,13 +496,13 @@ public:
         (
             const tmp<DimensionedField<Type, GeoMesh, PrimitiveField2>>&
         );
-
-        void operator+=(const dimensioned<Type>&);
 
         //- Assign-add to an expression
         template<class Expression, class = EnableIfExpressionable<Expression>>
         void operator+=(const Expression& e);
 
+        void operator+=(const dimensioned<Type>&);
+
         template<template<class> class PrimitiveField2>
         void operator-=
         (
@@ -553,11 +515,11 @@ public:
             const tmp<DimensionedField<Type, GeoMesh, PrimitiveField2>>&
         );
 
-        void operator-=(const dimensioned<Type>&);
-
         //- Assign-subtract to an expression
         template<class Expression, class = EnableIfExpressionable<Expression>>
         void operator-=(const Expression& e);
+
+        void operator-=(const dimensioned<Type>&);
 
         template<template<class> class PrimitiveField2>
         void operator*=
@@ -570,13 +532,13 @@ public:
         (
             const tmp<DimensionedField<scalar, GeoMesh, PrimitiveField2>>&
         );
-
-        void operator*=(const dimensioned<scalar>&);
 
         //- Assign-multiply to an expression
         template<class Expression, class = EnableIfExpressionable<Expression>>
         void operator*=(const Expression& e);
 
+        void operator*=(const dimensioned<scalar>&);
+
         template<template<class> class PrimitiveField2>
         void operator/=
         (
@@ -589,27 +551,20 @@ public:
             const tmp<DimensionedField<scalar, GeoMesh, PrimitiveField2>>&
         );
 
-        void operator/=(const dimensioned<scalar>&);
-
         //- Assign-divide to an expression
         template<class Expression, class = EnableIfExpressionable<Expression>>
         void operator/=(const Expression& e);
 
-
-    // Ostream Operators
-
-        friend Ostream& operator<< <Type, GeoMesh, PrimitiveField>
-        (
-            Ostream&,
-            const DimensionedField<Type, GeoMesh, PrimitiveField>&
-        );
-
-        friend Ostream& operator<< <Type, GeoMesh, PrimitiveField>
-        (
-            Ostream&,
-            const tmp<DimensionedField<Type, GeoMesh, PrimitiveField>>&
-        );
+        void operator/=(const dimensioned<scalar>&);
 };
+
+
+template<class Type, class GeoMesh, template<class> class PrimitiveField>
+Ostream& operator<<
+(
+    Ostream&,
+    const DimensionedField<Type, GeoMesh, PrimitiveField>&
+);
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

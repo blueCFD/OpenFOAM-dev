@@ -119,22 +119,6 @@ FieldField<Field, Type>::FieldField(const label size)
 
 
 template<template<class> class Field, class Type>
-FieldField<Field, Type>::FieldField
-(
-    const word& type,
-    const FieldField<Field, Type>& ff
-)
-:
-    PtrList<Field<Type>>(ff.size())
-{
-    forAll(*this, i)
-    {
-        set(i, Field<Type>::New(type, ff[i]));
-    }
-}
-
-
-template<template<class> class Field, class Type>
 FieldField<Field, Type>::FieldField(const FieldField<Field, Type>& f)
 :
     tmp<FieldField<Field, Type>>::refCount(),
@@ -151,20 +135,6 @@ FieldField<Field, Type>::FieldField(FieldField<Field, Type>&& f)
 
 
 template<template<class> class Field, class Type>
-FieldField<Field, Type>::FieldField(FieldField<Field, Type>& f, bool reuse)
-:
-    PtrList<Field<Type>>(f, reuse)
-{}
-
-
-template<template<class> class Field, class Type>
-FieldField<Field, Type>::FieldField(const PtrList<Field<Type>>& tl)
-:
-    PtrList<Field<Type>>(tl)
-{}
-
-
-template<template<class> class Field, class Type>
 FieldField<Field, Type>::FieldField(const tmp<FieldField<Field, Type>>& tf)
 :
     PtrList<Field<Type>>
@@ -175,13 +145,6 @@ FieldField<Field, Type>::FieldField(const tmp<FieldField<Field, Type>>& tf)
 {
     tf.clear();
 }
-
-
-template<template<class> class Field, class Type>
-FieldField<Field, Type>::FieldField(Istream& is)
-:
-    PtrList<Field<Type>>(is)
-{}
 
 
 template<template<class> class Field, class Type>
@@ -403,21 +366,12 @@ Ostream& operator<<(Ostream& os, const FieldField<Field, Type>& f)
 }
 
 
-template<template<class> class Field, class Type>
-Ostream& operator<<(Ostream& os, const tmp<FieldField<Field, Type>>& tf)
-{
-    os << tf();
-    tf.clear();
-    return os;
-}
-
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    #include "FieldFieldFunctions.T.C"
+#include "FieldFieldFunctions.T.C"
 
 // ************************************************************************* //

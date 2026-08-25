@@ -501,15 +501,9 @@ void Foam::Field<Type>::negate()
 
 
 template<class Type>
-Foam::tmp<Foam::Field<typename Foam::Field<Type>::cmptType>>
-Foam::Field<Type>::component
-(
-    const direction d
-) const
+auto Foam::Field<Type>::component(const direction& d) const
 {
-    tmp<Field<cmptType>> Component(new Field<cmptType>(this->size()));
-    ::Foam::component(Component.ref(), *this, d);
-    return Component;
+    return Foam::component(*this, d);
 }
 
 
@@ -563,11 +557,9 @@ VSForm Foam::Field<Type>::block(const label start) const
 
 
 template<class Type>
-Foam::tmp<Foam::Field<Type>> Foam::Field<Type>::T() const
+auto Foam::Field<Type>::T() const
 {
-    tmp<Field<Type>> transpose(new Field<Type>(this->size()));
-    ::Foam::T(transpose.ref(), *this);
-    return transpose;
+    return Foam::T(*this);
 }
 
 
@@ -733,12 +725,6 @@ void Foam::Field<Type>::operator op(const tmp<Field<TYPE>>& tf)                \
 }                                                                              \
                                                                                \
 template<class Type>                                                           \
-void Foam::Field<Type>::operator op(const PTYPE& t)                            \
-{                                                                              \
-    TFOR_ALL_F_OP_S(Type, *this, op, PTYPE, t)                                 \
-}                                                                              \
-                                                                               \
-template<class Type>                                                           \
 template<class Expression, class>                                              \
 void Foam::Field<Type>::operator op(const Expression& e)                       \
 {                                                                              \
@@ -753,6 +739,12 @@ void Foam::Field<Type>::operator op(const Expression& e)                       \
     {                                                                          \
         this->operator[](i) op expression::access(e, i);                       \
     }                                                                          \
+}                                                                              \
+                                                                               \
+template<class Type>                                                           \
+void Foam::Field<Type>::operator op(const PTYPE& t)                            \
+{                                                                              \
+    TFOR_ALL_F_OP_S(Type, *this, op, PTYPE, t)                                 \
 }
 
 #define pType_ typename Foam::Field<Type>::pType
@@ -809,15 +801,6 @@ template<class Type>
 Foam::Ostream& Foam::operator<<(Ostream& os, const Field<Type>& f)
 {
     os  << static_cast<const List<Type>&>(f);
-    return os;
-}
-
-
-template<class Type>
-Foam::Ostream& Foam::operator<<(Ostream& os, const tmp<Field<Type>>& tf)
-{
-    os  << tf();
-    tf.clear();
     return os;
 }
 
