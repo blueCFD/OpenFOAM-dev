@@ -35,17 +35,26 @@ SourceFiles
 #ifndef tensorField_H
 #define tensorField_H
 
-#include "tensor.H"
+#include "vectorField.H"
 #include "tensorExpressions.H"
-#include "Field.T.H"
 
 #define TEMPLATE
 #include "FieldFunctionsM.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+template<class Type>
+inline auto Foam::Field<Type>::T() const
+{
+    return Foam::T(*this);
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
 namespace Foam
 {
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 typedef Field<tensor> tensorField;
 
@@ -100,7 +109,6 @@ UNARY_OPERATOR(tensor, vector, *, hdual)
 
 BINARY_OPERATOR(vector, vector, tensor, /, divide)
 BINARY_TYPE_OPERATOR(vector, vector, tensor, /, divide)
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

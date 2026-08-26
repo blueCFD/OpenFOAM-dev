@@ -36,11 +36,18 @@ SourceFiles
 #define vectorField_H
 
 #include "scalarField.H"
-#include "vector.H"
 #include "vectorExpressions.H"
 
 #define TEMPLATE
 #include "FieldFunctionsM.T.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+template<class Type>
+inline auto Foam::Field<Type>::component(const direction& d) const
+{
+    return Foam::component(*this, d);
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -61,7 +68,6 @@ tmp<vectorField> zip
     const tmp<scalarField>& y,
     const tmp<scalarField>& z
 );
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

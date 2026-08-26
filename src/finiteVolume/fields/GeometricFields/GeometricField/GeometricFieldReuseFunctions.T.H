@@ -45,14 +45,14 @@ bool reusable(const tmp<GeometricField<Type, GeoMesh, PrimitiveField>>& tgf)
         if (geoField::debug)
         {
             const geoField& gf = tgf();
-            const typename geoField::Boundary& gbf = gf.boundaryField();
+            const typename geoField::BoundaryField& gbf = gf.boundaryField();
 
             forAll(gbf, patchi)
             {
                 if
                 (
                     !gbf[patchi].patch().constraint()
-                 && !isA<typename geoField::Patch::Calculated>(gbf[patchi])
+                 && !isA<typename geoField::PatchField::Calculated>(gbf[patchi])
                 )
                 {
                     WarningInFunction

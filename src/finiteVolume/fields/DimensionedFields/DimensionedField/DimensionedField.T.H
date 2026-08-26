@@ -64,25 +64,25 @@ class DimensionedField
 
 public:
 
-    // Public Typedefs
+    // Public Types
 
         //- Value type
-        typedef Type Type_;
+        using Type_ = Type;
 
         //- Geometric mesh type
-        typedef GeoMesh GeoMesh_;
+        using GeoMesh_ = GeoMesh;
 
         //- Base mesh type from which GeoMesh is constructed
-        typedef typename GeoMesh::Mesh Mesh;
+        using Mesh = typename GeoMesh::Mesh;
 
         //- Type of the field from which this DimensionedField is derived
-        typedef PrimitiveField<Type> FieldType;
+        using FieldType = PrimitiveField<Type>;
 
         //- Type of the field from which this DimensionedField is derived
-        typedef PrimitiveField<Type> Base;
+        using Base = PrimitiveField<Type>;
 
         //- Component type of the elements of the field
-        typedef typename PrimitiveField<Type>::cmptType cmptType;
+        using cmptType = typename PrimitiveField<Type>::cmptType;
 
 
 private:
@@ -394,7 +394,7 @@ public:
         USING_OLD_TIME_FIELD(DimensionedField);
 
         //- Return a component field expression of the field
-        auto component(const direction&) const;
+        inline auto component(const direction&) const;
 
         //- Replace a component field of the field
         template<template<class> class PrimitiveField2>
@@ -414,7 +414,7 @@ public:
 
         //- Return the field transpose expression
         //  (only defined for second rank tensors)
-        auto T() const;
+        inline auto T() const;
 
         //- Reset the field values to the given field
         //  Used for mesh to mesh mapping

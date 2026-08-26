@@ -47,7 +47,7 @@ void Foam::fvMeshTools::setPatchFields
 
         if (GeoField::Mesh::geometryFields.found(field.name())) continue;
 
-        typename GeoField::Boundary& bfield = field.boundaryFieldRef();
+        typename GeoField::BoundaryField& bfield = field.boundaryFieldRef();
 
         if
         (
@@ -58,7 +58,7 @@ void Foam::fvMeshTools::setPatchFields
             bfield.set
             (
                 patchi,
-                GeoField::Patch::New
+                GeoField::PatchField::New
                 (
                     mesh.boundary()[patchi],
                     field(),

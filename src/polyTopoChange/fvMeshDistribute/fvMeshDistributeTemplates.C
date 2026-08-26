@@ -58,7 +58,7 @@ void Foam::fvMeshDistribute::printFieldInfo(const fvMesh& mesh)
 template<class Type, class Mesh>
 void Foam::fvMeshDistribute::saveBoundaryFields
 (
-    PtrList<FieldField<surfaceMesh::PatchField, Type>>& bfields
+    PtrList<SurfaceBoundaryField<Type>>& bfields
 ) const
 {
     // Save whole boundary field
@@ -83,7 +83,7 @@ template<class Type, class Mesh>
 void Foam::fvMeshDistribute::mapBoundaryFields
 (
     const polyTopoChangeMap& map,
-    const PtrList<FieldField<surfaceMesh::PatchField, Type>>& oldBfields
+    const PtrList<SurfaceBoundaryField<Type>>& oldBfields
 )
 {
     // Map boundary field
@@ -100,11 +100,8 @@ void Foam::fvMeshDistribute::mapBoundaryFields
     {
         SurfaceField<Type>& field = fields[i];
 
-        typename SurfaceField<Type>::Boundary& bfield =
-            field.boundaryFieldRef();
-
-        const FieldField<surfaceMesh::PatchField, Type>& oldBfield =
-            oldBfields[i];
+        SurfaceBoundaryField<Type>& bfield = field.boundaryFieldRef();
+        const SurfaceBoundaryField<Type>& oldBfield = oldBfields[i];
 
         // Pull from old boundary field into bfield.
 
@@ -235,7 +232,7 @@ void Foam::fvMeshDistribute::correctProcessorPatchFields()
     {
         GeoField& field = fields[i];
 
-        typename GeoField::Boundary& bfield = field.boundaryFieldRef();
+        typename GeoField::BoundaryField& bfield = field.boundaryFieldRef();
 
         if
         (
