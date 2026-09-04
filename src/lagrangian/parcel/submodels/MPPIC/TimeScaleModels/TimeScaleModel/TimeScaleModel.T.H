@@ -37,7 +37,6 @@ SourceFiles
 
 #include "constants.H"
 #include "Field.T.H"
-#include "FieldField.T.H"
 #include "dictionary.H"
 #include "runTimeSelectionTables.H"
 

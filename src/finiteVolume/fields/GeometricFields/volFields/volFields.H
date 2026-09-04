@@ -62,13 +62,6 @@ class isVolMesh<fvMesh>
 {};
 
 template<>
-inline tmp<VolField<scalar>>
-GeometricField<scalar, fvMesh>::component
-(
-    const direction
-) const;
-
-template<>
 template<template<class> class PrimitiveField>
 inline void GeometricField<scalar, fvMesh>::replace
 (

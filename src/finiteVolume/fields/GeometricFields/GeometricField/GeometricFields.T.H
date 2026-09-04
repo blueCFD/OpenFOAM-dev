@@ -31,10 +31,8 @@ Description
 #ifndef GeometricFields_H
 #define GeometricFields_H
 
-#include "GeometricScalarField.T.H"
-#include "GeometricVectorField.T.H"
-#include "GeometricTensorField.T.H"
-#include "GeometricSphericalTensorField.T.H"
+#include "GeometricVectorField.H"
+#include "GeometricTensorField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,33 +21,33 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+InClass
+    Foam::GeometricTensorField
+
 Description
-    Specialisation of FieldField<Field, T> for vector.
+    Tensor specific part of the implementation of GeometricField.
+
+SourceFiles
+    GeometricTensorField.C
 
 \*---------------------------------------------------------------------------*/
 
-#include "vectorFieldField.H"
+#ifndef GeometricTensorField_H
+#define GeometricTensorField_H
 
-#define TEMPLATE template<template<class> class Field>
-#include "FieldFieldFunctionsM.T.C"
+#include "GeometricVectorField.H"
+#include "DimensionedTensorField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam
+template<class Type, class GeoMesh, template<class> class PrimitiveField>
+inline auto Foam::GeometricField<Type, GeoMesh, PrimitiveField>::T() const
 {
-
-// * * * * * * * * * * * * * * * global functions  * * * * * * * * * * * * * //
-
-UNARY_FUNCTION(vector, vector, normalised)
-UNARY_FUNCTION(vector, vector, perpendicular)
-
+    return Foam::T(*this);
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "undefFieldFunctionsM.H"
+#endif
 
 // ************************************************************************* //

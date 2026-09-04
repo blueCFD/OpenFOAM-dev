@@ -153,11 +153,14 @@ public:
             return true;
         }
 
-        //- Return a reference to the value
+        //- Return a reference to the value after storing old-time values
         Type& value();
 
         //- Return a const-reference to the value
-        const Type& value() const;
+        const Type& value() const
+        {
+            return dimensioned<Type>::value();
+        }
 
         //- Reset the field values to the given field
         //  Equivalent to operator=
@@ -191,6 +194,8 @@ public:
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "UniformDimensionedFieldExpression.T.H"
 
 #ifdef NoRepository
     #include "UniformDimensionedField.T.C"

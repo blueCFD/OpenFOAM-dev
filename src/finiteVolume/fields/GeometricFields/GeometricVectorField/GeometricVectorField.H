@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,51 +21,36 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+InClass
+    Foam::GeometricVectorField
+
 Description
-    Specialisation of FieldField\<T\> for symmTensor.
+    Vector specific part of the implementation of GeometricField.
+
+SourceFiles
+    GeometricVectorField.C
 
 \*---------------------------------------------------------------------------*/
 
-#include "symmTensorFieldField.H"
+#ifndef GeometricVectorField_H
+#define GeometricVectorField_H
 
-#define TEMPLATE template<template<class> class Field>
-#include "FieldFieldFunctionsM.T.C"
+#include "GeometricField.T.H"
+#include "DimensionedVectorField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam
+template<class Type, class GeoMesh, template<class> class PrimitiveField>
+inline auto Foam::GeometricField<Type, GeoMesh, PrimitiveField>::component
+(
+    const direction& d
+) const
 {
-
-// * * * * * * * * * * * * * * * global operators  * * * * * * * * * * * * * //
-
-UNARY_FUNCTION(symmTensor, vector, sqr)
-UNARY_FUNCTION(symmTensor, symmTensor, innerSqr)
-
-UNARY_FUNCTION(scalar, symmTensor, tr)
-UNARY_FUNCTION(sphericalTensor, symmTensor, sph)
-UNARY_FUNCTION(symmTensor, symmTensor, symm)
-UNARY_FUNCTION(symmTensor, symmTensor, twoSymm)
-UNARY_FUNCTION(symmTensor, symmTensor, dev)
-UNARY_FUNCTION(symmTensor, symmTensor, dev2)
-UNARY_FUNCTION(scalar, symmTensor, det)
-UNARY_FUNCTION(symmTensor, symmTensor, cof)
-UNARY_FUNCTION(symmTensor, symmTensor, inv)
-
-
-// * * * * * * * * * * * * * * * global operators  * * * * * * * * * * * * * //
-
-UNARY_OPERATOR(vector, symmTensor, *, hdual)
-
-BINARY_OPERATOR(tensor, symmTensor, symmTensor, &, dot)
-BINARY_TYPE_OPERATOR(tensor, symmTensor, symmTensor, &, dot)
-
+    return Foam::component(*this, d);
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "undefFieldFunctionsM.H"
+#endif
 
 // ************************************************************************* //

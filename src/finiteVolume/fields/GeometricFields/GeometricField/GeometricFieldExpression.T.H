@@ -31,80 +31,72 @@ License
 
 namespace Foam
 {
+
+//- Type used to identify access to the underlying internal field
+struct GeometricField_InternalField {};
+
+//- Type used to identify access to the underlying boundary field
+struct GeometricField_BoundaryField {};
+
 namespace expression
 {
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-//- A DimensionedField is expressionable
+//- A GeometricField is expressionable
 template<class Type, class GeoMesh, template<class> class PrimitiveField>
-struct Expressionable<DimensionedField<Type, GeoMesh, PrimitiveField>>
+struct Expressionable<GeometricField<Type, GeoMesh, PrimitiveField>>
 :
     public std::integral_constant<signed char, 1>
 {};
 
-//- Access to the dimensions of a DimensionedField is not expressionable. It
-//  returns a non-expressionable object (i.e., a dimensionSet).
-template<class Type, class GeoMesh, template<class> class PrimitiveField>
-struct Expressionable
-<
-    DimensionedField<Type, GeoMesh, PrimitiveField>,
-    Arguments<dimensionSet>
->
-:
-    public std::integral_constant<signed char, 0>
-{};
-
-//- Define access to the base primitive field of a DimensionedField. Note
-//  that expression::Value is specified as well as expression::Base. This is
-//  not important here, but it is important when accessing dimensioned
-//  constants in the same layer. The presence of expression::Value will ensure
-//  that their dimensions are removed and only their value is retained in the
-//  accessed expression.
+//- Define access to the internal field of a GeometricField
 template<class Type, class GeoMesh, template<class> class PrimitiveField>
 struct Operate
 <
-    DimensionedField<Type, GeoMesh, PrimitiveField>,
-    Arguments<Value, Base>
+    GeometricField<Type, GeoMesh, PrimitiveField>,
+    Arguments<GeometricField_InternalField>
 >
 {
-    using type = const PrimitiveField<Type>&;
+    using type = const DimensionedField<Type, GeoMesh, PrimitiveField>&;
 
     static type access
     (
-        const DimensionedField<Type, GeoMesh, PrimitiveField>& f,
+        const GeometricField<Type, GeoMesh, PrimitiveField>& f,
+        const GeometricField_InternalField&
+    )
+    {
+        return f.internalField();
+    }
+};
+
+//- Define access to the boundary field of a GeometricField
+template<class Type, class GeoMesh, template<class> class PrimitiveField>
+struct Operate
+<
+    GeometricField<Type, GeoMesh, PrimitiveField>,
+    Arguments<Value, GeometricField_BoundaryField>
+>
+{
+    using type =
+        const
+        typename GeometricField<Type, GeoMesh, PrimitiveField>::BoundaryField&;
+
+    static type access
+    (
+        const GeometricField<Type, GeoMesh, PrimitiveField>& f,
         const Value&,
-        const Base&
+        const GeometricField_BoundaryField&
     )
     {
-        return f.primitiveField();
+        return f.boundaryField();
     }
 };
 
-//- Access the dimensions of a DimensionedField
-template<class Type, class GeoMesh, template<class> class PrimitiveField>
-struct Operate
-<
-    DimensionedField<Type, GeoMesh, PrimitiveField>,
-    Arguments<dimensionSet>
->
-{
-    using type = dimensionsOrVariableExponent;
-
-    static type access
-    (
-        const DimensionedField<Type, GeoMesh, PrimitiveField>& f,
-        const dimensionSet&
-    )
-    {
-        return type(f.dimensions());
-    }
-};
-
-//- Define the result types for a DimensionedField as the dimensioned
+//- Define the result types for a GeometricField as the dimensioned
 //  equivalents of the primitive types
 template<class Type, class GeoMesh, template<class> class PrimitiveField>
-struct Result<DimensionedField<Type, GeoMesh, PrimitiveField>>
+struct Result<GeometricField<Type, GeoMesh, PrimitiveField>>
 {
     template<class Expression>
     using primitiveType =
@@ -115,7 +107,14 @@ struct Result<DimensionedField<Type, GeoMesh, PrimitiveField>>
         <
             typename Operate
             <
-                std::decay_t<Expression>,
+                std::decay_t
+                <
+                    typename Operate
+                    <
+                        std::decay_t<Expression>,
+                        Arguments<GeometricField_InternalField>
+                    >::type
+                >,
                 Arguments<Value, Base>
             >::type
         >;
@@ -124,15 +123,15 @@ struct Result<DimensionedField<Type, GeoMesh, PrimitiveField>>
     using elementType = dimensioned<primitiveType<Expression>>;
 
     template<class Expression>
-    using type =
-        DimensionedField<primitiveType<Expression>, GeoMesh, Field>;
+    using type = GeometricField<primitiveType<Expression>, GeoMesh, Field>;
 };
 
-//- Implement a reduction of DimensionedField which reduces the primitive
-//  field (locally and then globally) and then combines the result with the
-//  name and dimensions of the expression to return a dimensioned type
+//- Implement a reduction of GeometricField which reduces both the primitive
+//  and boundary fields (locally and then globally) and then combines the
+//  result with the name and dimensions of the expression to return a
+//  dimensioned type
 template<class Type, class GeoMesh, template<class> class PrimitiveField>
-struct Reduce<DimensionedField<Type, GeoMesh, PrimitiveField>>
+struct Reduce<GeometricField<Type, GeoMesh, PrimitiveField>>
 {
     // Global (parallel) reductions should be applied to the result by default
     static const bool globalReduce = true;
@@ -140,7 +139,7 @@ struct Reduce<DimensionedField<Type, GeoMesh, PrimitiveField>>
     template<class Op, class Expression>
     static typename Result
     <
-        DimensionedField<Type, GeoMesh, PrimitiveField>
+        GeometricField<Type, GeoMesh, PrimitiveField>
     >::template elementType<Expression> value
     (
         const Expression& e,
@@ -148,27 +147,57 @@ struct Reduce<DimensionedField<Type, GeoMesh, PrimitiveField>>
         const label comm
     )
     {
-        return
-            typename Result
-            <
-                DimensionedField<Type, GeoMesh, PrimitiveField>
-            >::template elementType<Expression>
+        using BoundaryField =
+            typename GeometricField<Type, GeoMesh, PrimitiveField>::
+            BoundaryField;
+
+        auto x =
+            Op::value
             (
-                Op::name(name(e)),
-                access(e, NullObjectRef<dimensionSet>()),
                 Reduce<PrimitiveField<Type>>::template value<Op>
                 (
-                    access(e, Value(), Base()),
+                    access
+                    (
+                        access(e, GeometricField_InternalField()),
+                        Value(),
+                        Base()
+                    ),
+                    globalReduce,
+                    comm
+                ),
+                Reduce<BoundaryField>::template value<Op>
+                (
+                    access
+                    (
+                        e,
+                        Value(),
+                        GeometricField_BoundaryField()
+                    ),
                     globalReduce,
                     comm
                 )
+            );
+
+        return
+            typename Result
+            <
+                GeometricField<Type, GeoMesh, PrimitiveField>
+            >::template elementType<Expression>
+            (
+                Op::name(name(e)),
+                access
+                (
+                    access(e, GeometricField_InternalField()),
+                    NullObjectRef<dimensionSet>()
+                ),
+                x
             );
     }
 
     template<class Expression>
     static typename Result
     <
-        DimensionedField<Type, GeoMesh, PrimitiveField>
+        GeometricField<Type, GeoMesh, PrimitiveField>
     >::template elementType<Expression> average
     (
         const Expression& e,
@@ -176,27 +205,19 @@ struct Reduce<DimensionedField<Type, GeoMesh, PrimitiveField>>
         const label comm
     )
     {
-        return
-            typename Result
-            <
-                DimensionedField<Type, GeoMesh, PrimitiveField>
-            >::template elementType<Expression>
+        return Reduce<DimensionedField<Type, GeoMesh, PrimitiveField>>::
+            average
             (
-                "average(" + name(e) + ')',
-                access(e, NullObjectRef<dimensionSet>()),
-                Reduce<PrimitiveField<Type>>::average
-                (
-                    access(e, Value(), Base()),
-                    globalReduce,
-                    comm
-                )
+                access(e, GeometricField_InternalField()),
+                globalReduce,
+                comm
             );
     }
 
     template<class Expression, class WeightExpression>
     static typename Result
     <
-        DimensionedField<Type, GeoMesh, PrimitiveField>
+        GeometricField<Type, GeoMesh, PrimitiveField>
     >::template elementType<Expression> weightedAverage
     (
         const Expression& e,
@@ -205,40 +226,32 @@ struct Reduce<DimensionedField<Type, GeoMesh, PrimitiveField>>
         const label comm
     )
     {
-        return
-            typename Result
-            <
-                DimensionedField<Type, GeoMesh, PrimitiveField>
-            >::template elementType<Expression>
+        return Reduce<DimensionedField<Type, GeoMesh, PrimitiveField>>::
+            weightedAverage
             (
-                "weightedAverage(" + name(e) + ',' + name(we) + ')',
-                access(e, NullObjectRef<dimensionSet>()),
-                Reduce<PrimitiveField<Type>>::weightedAverage
-                (
-                    access(e, Value(), Base()),
-                    access(we, Value(), Base()),
-                    globalReduce,
-                    comm
-                )
+                access(e, GeometricField_InternalField()),
+                access(we, GeometricField_InternalField()),
+                globalReduce,
+                comm
             );
     }
 };
 
-//- The name of a DimensionedField is stored in its IOobject, so use this
+//- The name of a GeometricField is stored in its IOobject, so use this
 //  rather than the default string representation of the type and pointer
 template<class Type, class GeoMesh, template<class> class PrimitiveField>
 struct Name
 <
-    DimensionedField<Type, GeoMesh, PrimitiveField>,
+    GeometricField<Type, GeoMesh, PrimitiveField>,
     EnableIfExpressionable
     <
-        DimensionedField<Type, GeoMesh, PrimitiveField>
+        GeometricField<Type, GeoMesh, PrimitiveField>
     >
 >
 {
     static word value
     (
-        const DimensionedField<Type, GeoMesh, PrimitiveField>& f
+        const GeometricField<Type, GeoMesh, PrimitiveField>& f
     )
     {
         return f.name();
