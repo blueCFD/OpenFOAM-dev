@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2021-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,50 +21,55 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Class
+    Foam::VectorSpaceOps
+
+Description
+    Operator function for VectorSpace
+
 \*---------------------------------------------------------------------------*/
 
-#include "multiply.H"
-#include "addToRunTimeSelectionTable.H"
+#ifndef VectorSpaceOp_H
+#define VectorSpaceOp_H
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+#include "direction.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace functionObjects
+
+/*---------------------------------------------------------------------------*\
+                         Class VectorSpaceOp Declaration
+\*---------------------------------------------------------------------------*/
+
+template<direction N, direction I>
+struct VectorSpaceOp
 {
-    defineTypeNameAndDebug(multiply, 0);
-    addToRunTimeSelectionTable(functionObject, multiply, dictionary);
-}
-}
+    template<class Op, class ... Vs>
+    static inline void op(const Op& op, Vs& ... vs)
+    {
+        op(vs.v_[I] ...);
+        VectorSpaceOp<N, I + 1>::op(op, vs ...);
+    }
+};
 
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
-
-bool Foam::functionObjects::multiply::calc()
+template<direction N>
+struct VectorSpaceOp<N, N>
 {
-    return calcOp<multiplyOp>();
-}
+    template<class Op, class ... Vs>
+    static inline void op(const Op& op, Vs& ... vs)
+    {}
+};
 
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-Foam::functionObjects::multiply::multiply
-(
-    const word& name,
-    const Time& runTime,
-    const dictionary& dict
-)
-:
-    fieldsExpression(name, runTime, dict)
-{
-    setResultName("multiply");
-}
+} // End namespace Foam
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::functionObjects::multiply::~multiply()
-{}
-
+#endif
 
 // ************************************************************************* //
