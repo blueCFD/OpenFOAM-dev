@@ -21,43 +21,30 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Typedef
-    Foam::tensorField
+InClass
+    Foam::DimensionedTensorField
 
 Description
-    Specialisation of Field\<T\> for tensor.
+    Tensor specific part of the implementation of DimensionedField.
 
 SourceFiles
-    tensorField.C
+    DimensionedTensorField.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef tensorField_H
-#define tensorField_H
+#ifndef DimensionedTensorField_H
+#define DimensionedTensorField_H
 
-#include "vectorField.H"
+#include "DimensionedVectorField.H"
 #include "tensorExpressions.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-template<class Type>
-inline auto Foam::Field<Type>::T() const
+template<class Type, class GeoMesh, template<class> class PrimitiveField>
+inline auto Foam::DimensionedField<Type, GeoMesh, PrimitiveField>::T() const
 {
     return Foam::T(*this);
 }
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
-{
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-typedef Field<tensor> tensorField;
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

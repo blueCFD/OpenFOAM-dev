@@ -36,7 +36,8 @@ SourceFiles
 #define GeometricTensorField_H
 
 #include "GeometricVectorField.H"
-#include "DimensionedTensorField.T.H"
+#include "DimensionedTensorField.H"
+#include "DimensionedSymmTensorField.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

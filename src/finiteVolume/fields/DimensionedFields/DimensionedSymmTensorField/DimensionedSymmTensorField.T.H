@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,29 +22,20 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 InClass
-    Foam::DimensionedTensorField
+    Foam::DimensionedSymmTensorField
 
 Description
-    Tensor specific part of the implementation of DimensionedField.
+    SymmTensor specific part of the implementation of DimensionedField.
 
 SourceFiles
-    DimensionedTensorField.C
+    DimensionedSymmTensorField.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef DimensionedTensorField_H
-#define DimensionedTensorField_H
+#ifndef DimensionedSymmTensorField_H
+#define DimensionedSymmTensorField_H
 
-#include "DimensionedVectorField.H"
-#include "tensorExpressions.H"
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-template<class Type, class GeoMesh, template<class> class PrimitiveField>
-inline auto Foam::DimensionedField<Type, GeoMesh, PrimitiveField>::T() const
-{
-    return Foam::T(*this);
-}
+#include "DimensionedTensorField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -54,16 +45,16 @@ namespace Foam
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 template<class GeoMesh, template<class> class PrimitiveField>
-tmp<DimensionedField<tensor, GeoMesh, Field>> inv
+tmp<DimensionedField<symmTensor, GeoMesh, Field>> inv
 (
-    const DimensionedField<tensor, GeoMesh, PrimitiveField>&,
+    const DimensionedField<symmTensor, GeoMesh, PrimitiveField>&,
     const Vector<label>& solutionD
 );
 
 template<class GeoMesh, template<class> class PrimitiveField>
-tmp<DimensionedField<tensor, GeoMesh, Field>> inv
+tmp<DimensionedField<symmTensor, GeoMesh, Field>> inv
 (
-    const tmp<DimensionedField<tensor, GeoMesh, PrimitiveField>>& tdtf,
+    const tmp<DimensionedField<symmTensor, GeoMesh, PrimitiveField>>& tdtf,
     const Vector<label>& solutionD
 );
 
@@ -74,7 +65,7 @@ tmp<DimensionedField<tensor, GeoMesh, Field>> inv
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-    #include "DimensionedTensorField.T.C"
+    #include "DimensionedSymmTensorField.T.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

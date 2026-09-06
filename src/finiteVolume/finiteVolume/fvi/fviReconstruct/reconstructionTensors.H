@@ -21,79 +21,100 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Class
+    Foam::reconstructionTensors
+
+Description
+    Flux reconstruction tensors
+
+SourceFiles
+    reconstructionTensors.C
+
 \*---------------------------------------------------------------------------*/
 
-#include "fviReconstruct.H"
-#include "fvMesh.H"
+#ifndef reconstructionTensors_H
+#define reconstructionTensors_H
+
+#include "DemandDrivenMeshObject.T.H"
 #include "volFields.H"
-#include "surfaceFields.H"
-#include "fviSurfaceIntegrate.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
 namespace fvi
 {
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+/*---------------------------------------------------------------------------*\
+                   Class reconstructionTensors Declaration
+\*---------------------------------------------------------------------------*/
 
-template<class Type>
-tmp<VolInternalField<typename outerProduct<vector, Type>::type>>
-reconstruct(const SurfaceField<Type>& ssf)
+class reconstructionTensors
+:
+    public DemandDrivenMeshObject
+    <
+        fvMesh,
+        MoveableMeshObject,
+        reconstructionTensors
+    >
 {
-    typedef typename outerProduct<vector, Type>::type GradType;
+    // Private Data
 
-    const fvMesh& mesh = ssf.mesh()();
-
-    surfaceVectorField SfHat(mesh.Sf()/mesh.magSf());
-
-    tmp<VolInternalField<GradType>> treconField
-    (
-        VolInternalField<GradType>::New
-        (
-            "volIntegrate("+ssf.name()+')',
-            mesh,
-            dimensioned<GradType>("0", ssf.dimensions()/dimensions::area, Zero)
-        )
-    );
-
-    if (!mesh.nGeometricD())
-    {
-        return treconField;
-    }
-
-    treconField.ref() =
-        inv(surfaceSum(SfHat*mesh.Sf()), mesh.solutionD())
-      & surfaceSum(SfHat*ssf);
-
-    return treconField;
-}
+        //- Reconstruction tensors
+        VolInternalField<symmTensor> tensors_;
 
 
-template<class Type>
-tmp<VolInternalField<typename outerProduct<vector, Type>::type>>
-reconstruct(const tmp<SurfaceField<Type>>& tssf)
-{
-    typedef typename outerProduct<vector, Type>::type GradType;
-    tmp<VolInternalField<GradType>> tvf
-    (
-        fvi::reconstruct(tssf())
-    );
-    tssf.clear();
-    return tvf;
-}
+    // Private Member Functions
+
+        //- Construct Least-squares gradient vectors
+        void calcReconstructTensors();
+
+
+protected:
+
+    friend class DemandDrivenMeshObject
+    <
+        fvMesh,
+        MoveableMeshObject,
+        reconstructionTensors
+    >;
+
+    // Protected Constructors
+
+        //- Construct given an fvMesh
+        explicit reconstructionTensors(const fvMesh&);
+
+
+public:
+
+    // Declare name of the class and its debug switch
+    TypeName("reconstructionTensors");
+
+
+    //- Destructor
+    virtual ~reconstructionTensors();
+
+
+    // Member Functions
+
+        //- Return reference to the reconstruction tensors
+        const VolInternalField<symmTensor>& tensors() const
+        {
+            return tensors_;
+        }
+
+        //- Delete the least square vectors when the mesh moves
+        virtual bool movePoints();
+};
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace fvi
+} // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace Foam
+#endif
 
 // ************************************************************************* //

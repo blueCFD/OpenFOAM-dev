@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -21,30 +21,10 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Typedef
-    Foam::tensorField
-
-Description
-    Specialisation of Field\<T\> for tensor.
-
-SourceFiles
-    tensorField.C
-
 \*---------------------------------------------------------------------------*/
 
-#ifndef tensorField_H
-#define tensorField_H
-
-#include "vectorField.H"
-#include "tensorExpressions.H"
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-template<class Type>
-inline auto Foam::Field<Type>::T() const
-{
-    return Foam::T(*this);
-}
+#include "DimensionedSymmTensorField.T.H"
+#include "symmTensorField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -53,14 +33,46 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-typedef Field<tensor> tensorField;
+template<class GeoMesh, template<class> class PrimitiveField>
+tmp<DimensionedField<symmTensor, GeoMesh, Field>> inv
+(
+    const DimensionedField<symmTensor, GeoMesh, PrimitiveField>& dtf,
+    const Vector<label>& solutionD
+)
+{
+    tmp<DimensionedField<symmTensor, GeoMesh, Field>> tRes
+    (
+        DimensionedField<symmTensor, GeoMesh, Field>::New
+        (
+            "inv(" + dtf.name() + ',' + name(solutionD) + ')',
+            dtf.mesh(),
+            inv(dtf.dimensions())
+        )
+    );
+
+    inv(tRes.ref().primitiveFieldRef(), dtf.primitiveField(), solutionD);
+
+    return tRes;
+}
+
+
+template<class GeoMesh, template<class> class PrimitiveField>
+tmp<DimensionedField<symmTensor, GeoMesh, Field>> inv
+(
+    const tmp<DimensionedField<symmTensor, GeoMesh, PrimitiveField>>& tdtf,
+    const Vector<label>& solutionD
+)
+{
+    tmp<DimensionedField<symmTensor, GeoMesh, Field>> tRes
+    (
+        inv(tdtf(), solutionD)
+    );
+    tdtf.clear();
+    return tRes;
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#endif
 
 // ************************************************************************* //
