@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -62,11 +62,11 @@ static const floatScalar floatScalarSmall
 static const floatScalar floatScalarGreat
     = 1.0/floatScalarSmall;
 
-static const floatScalar floatScalarRootVGreat = ::sqrt(floatScalarVGreat);
-static const floatScalar floatScalarRootVSmall = ::sqrt(floatScalarVSmall);
+static const floatScalar floatScalarRootVGreat = std::sqrt(floatScalarVGreat);
+static const floatScalar floatScalarRootVSmall = std::sqrt(floatScalarVSmall);
 
-static const floatScalar floatScalarRootGreat = ::sqrt(floatScalarGreat);
-static const floatScalar floatScalarRootSmall = ::sqrt(floatScalarSmall);
+static const floatScalar floatScalarRootGreat = std::sqrt(floatScalarGreat);
+static const floatScalar floatScalarRootSmall = std::sqrt(floatScalarSmall);
 
 static const floatScalar floatScalarNaN
     = numeric_limits<floatScalar>::signaling_NaN();
@@ -118,6 +118,12 @@ inline Scalar func(const Scalar s) \
     return ::func##f(s);           \
 }
 
+#define cFunc(func)                \
+inline Scalar func(const Scalar s) \
+{                                  \
+    return ::func##f(s);           \
+}
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
@@ -161,6 +167,7 @@ inline Scalar yn(const int n, const Scalar s)
 #undef ScalarNaN
 #undef readScalar
 #undef transFunc
+#undef cFunc
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
