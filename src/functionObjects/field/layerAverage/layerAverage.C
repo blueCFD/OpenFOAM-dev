@@ -26,7 +26,6 @@ License
 #include "layerAverage.H"
 #include "FaceCellWave.T.H"
 #include "layerInfo.H"
-#include "regionSplit.H"
 #include "syncTools.H"
 #include "volFields.H"
 #include "writeFile.H"

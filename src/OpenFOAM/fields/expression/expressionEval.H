@@ -45,36 +45,40 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-//- Evaluate an expression and return a temporary object
-template<class Expression, class = EnableIfExpressionable<Expression>>
-tmp
-<
-    typename expression::Result
-    <
-        typename expression::AllContainers<Expression>::type
-    >::template type<Expression>
->
-eval(const Expression& e)
+//- Base class for conditional expression evaluation
+template<class Expression, class = void>
+struct Eval;
+
+//- If the argument is not an expression return it
+template<class Expression>
+struct Eval<Expression, EnableIfNotExpression<Expression>>
 {
-    return
-        tmp
-        <
-            typename expression::Result
-            <
-                typename expression::AllContainers<Expression>::type
-            >::template type<Expression>
-        >
-        (
-            new typename expression::Result
-            <
-                typename expression::AllContainers<Expression>::type
-            >::template type<Expression>(e)
-        );
+    static const Expression& eval(const Expression& e)
+    {
+        return e;
+    }
+};
+
+//- If the argument is an expression evaluate it and return the result
+template<class Expression>
+struct Eval<Expression, EnableIfExpression<Expression>>
+{
+    static tmp<ResultType<Expression>> eval(const Expression& e)
+    {
+        return tmp<ResultType<Expression>>(new ResultType<Expression>(e));
+    }
+};
+
+//- If the argument is an expression evaluate it and return the tmp<result>
+//  otherwise return it
+template<class Expression, class = EnableIfExpressionable<Expression>>
+tmp<ResultType<Expression>> eval(const Expression& e)
+{
+    return Eval<Expression>::eval(e);
 }
 
-
 //- Evaluate an expression and write to Ostream
-template<class Expression, class = EnableIfExpressionable<Expression>>
+template<class Expression, class = EnableIfExpression<Expression>>
 Ostream& operator<<(Ostream& os, const Expression& e)
 {
     os << eval(e);
