@@ -103,12 +103,12 @@ public:
         word(Istream&);
 
         //- Concatenating constructor
-        template<class Str, class Str1, class Str2, class... Strs>
+        template<class Str1, class Str2, class Str3, class... Strs>
         inline word
         (
-            const Str& str,
             const Str1& str1,
             const Str2& str2,
+            const Str3& str3,
             Strs const&... strs
         );
 
@@ -120,6 +120,9 @@ public:
 
         //- Return the word with the first letter capitalised
         inline word capitalise() const;
+
+        template<class... Strs>
+        inline word& append(Strs const&... strs);
 
         template<class Str, class... Strs>
         inline static word cat(const Str& a, Strs const&... strs);

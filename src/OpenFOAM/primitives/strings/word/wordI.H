@@ -103,19 +103,19 @@ inline Foam::word::word(const char* s, const size_type n)
 }
 
 
-template<class Str, class Str1, class Str2, class... Strs>
+template<class Str1, class Str2, class Str3, class... Strs>
 inline Foam::word::word
 (
-    const Str& str,
     const Str1& str1,
     const Str2& str2,
+    const Str3& str3,
     Strs const&... strs
 )
 :
-    word(str, false)
+    word(str1, false)
 {
-    Append(*this, str1);
-    Append(*this, str2, strs...);
+    Append(*this, str2);
+    Append(*this, str3, strs...);
 }
 
 
@@ -142,6 +142,14 @@ inline Foam::word Foam::word::capitalise() const
     word w(*this);
     w[0] = toupper(w[0]);
     return w;
+}
+
+
+template <class... Strs>
+inline Foam::word& Foam::word::append(Strs const&... strs)
+{
+    Append(*this, strs...);
+    return *this;
 }
 
 

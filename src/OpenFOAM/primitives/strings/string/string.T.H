@@ -93,6 +93,9 @@ public:
         //- An empty string
         static const string null;
 
+        //- An empty string type
+        struct Null {};
+
 
     //- Hashing function class, shared by all the derived classes
     class hash
@@ -138,8 +141,14 @@ public:
         string(Istream&);
 
         //- Concatenating constructor
-        template<class Str, class Str1, class... Strs>
-        inline string(const Str& str, const Str1& str1, Strs const&... strs);
+        template<class Str1, class Str2, class Str3, class... Strs>
+        inline string
+        (
+            const Str1& str1,
+            const Str2& str2,
+            const Str3& str3,
+            Strs const&... strs
+        );
 
 
     // Member Functions
@@ -298,6 +307,11 @@ public:
 
         inline void operator=(const string&);
         inline void operator=(string&&);
+
+        using std::string::operator+=;
+
+        inline void operator+=(const Null&)
+        {}
 };
 
 
