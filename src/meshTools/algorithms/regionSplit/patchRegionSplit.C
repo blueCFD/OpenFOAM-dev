@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,54 +23,54 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "uniformConstant_SuModel.H"
-#include "addToRunTimeSelectionTable.H"
+#include "patchRegionSplit.H"
+#include "PatchTools.T.H"
+#include "uindirectPrimitivePatch.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace SuModels
-{
-    defineTypeNameAndDebug(uniformConstant, 0);
-    addToRunTimeSelectionTable(SuModel, uniformConstant, dictionary);
-}
-}
-
-
-// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
-
-bool Foam::SuModels::uniformConstant::readCoeffs(const dictionary& dict)
-{
-    SuModel::readCoeffs(dict);
-
-    Su_.read(dict);
-    SuModel::Su_ == Su_;
-
-    return true;
+    defineTypeNameAndDebug(patchRegionSplit, 0);
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::SuModels::uniformConstant::uniformConstant
+Foam::patchRegionSplit::patchRegionSplit
 (
-    const dictionary& dict,
-    const ubRhoThermo& thermo,
-    const compressibleMomentumTransportModel& turbulence
+    const polyMesh& mesh,
+    const labelList& faces
 )
 :
-    SuModel(thermo, turbulence),
-    Su_("Su", dimensions::velocity, dict)
+    regionSplitBase(faces.size())
 {
-    SuModel::Su_ == Su_;
+    const uindirectPrimitivePatch patch
+    (
+        UIndirectList<face>(mesh.faces(), faces),
+        mesh.points()
+    );
+
+    const label nLocalZones = PatchTools::markZones(patch, boolList(), *this);
+
+    nRegions_ =
+        Pstream::parRun()
+      ? compactGlobalRegionSplit(globalIndex(nLocalZones), *this)
+      : compactLocalRegionSplit(*this);
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+Foam::patchRegionSplit::patchRegionSplit(const polyPatch& patch)
+:
+    regionSplitBase(patch.size())
+{
+    const label nLocalZones = PatchTools::markZones(patch, boolList(), *this);
 
-Foam::SuModels::uniformConstant::~uniformConstant()
-{}
+    nRegions_ =
+        Pstream::parRun()
+      ? compactGlobalRegionSplit(globalIndex(nLocalZones), *this)
+      : compactLocalRegionSplit(*this);
+}
 
 
 // ************************************************************************* //

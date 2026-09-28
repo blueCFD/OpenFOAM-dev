@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,89 +22,77 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::SuModels::uniformConstant
+    Foam::patchToPatchExtrapolation
 
 Description
-    Simple uniform constant laminar flame speed \c Su model
+    An unimplemented extrapolation procedure for patch-to-patch interpolations.
+    This simply checks that the interpolation is complete and that
+    extrapolation is not necessary and raises an error if that is not the case.
 
 SourceFiles
-    uniformConstant_SuModel.C
+    patchToPatchExtrapolation.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef uniformConstant_SuModel_H
-#define uniformConstant_SuModel_H
+#ifndef nonePatchToPatchExtrapolation_H
+#define nonePatchToPatchExtrapolation_H
 
-#include "SuModel.H"
+#include "patchToPatchExtrapolation.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace SuModels
+namespace patchToPatchExtrapolations
 {
 
 /*---------------------------------------------------------------------------*\
-                            Class uniformConstant Declaration
+                            Class none Declaration
 \*---------------------------------------------------------------------------*/
 
-class uniformConstant
+class none
 :
-    public SuModel
+    public patchToPatchExtrapolation
 {
-    // Private Data
-
-        //- Specified laminar flame speed
-        dimensionedScalar Su_;
-
-
-protected:
-
-        //- Update coefficients from given dictionary
-        virtual bool readCoeffs(const dictionary& dict);
-
-
 public:
 
-    //- Runtime type information
-    TypeName("uniformConstant");
+    //- Run-time type information
+    TypeName("none");
 
 
     // Constructors
 
-        //- Construct from components
-        uniformConstant
-        (
-            const dictionary& dict,
-            const ubRhoThermo& thermo,
-            const compressibleMomentumTransportModel& turbulence
-        );
-
-        //- Disallow default bitwise copy construction
-        uniformConstant(const uniformConstant&) = delete;
+        //- Construct null
+        none();
 
 
     //- Destructor
-    virtual ~uniformConstant();
+    virtual ~none();
 
 
     // Member Functions
 
-        //- Correct the laminar flame speed
-        virtual void correct()
-        {}
+        //- Compute the extrapolation addressing if necessary
+        void update
+        (
+            const polyPatch& patch,
+            const PackedBoolList& faceCoupleds
+        );
 
-
-    // Member Operators
-
-        //- Disallow default bitwise assignment
-        void operator=(const uniformConstant&) = delete;
+        //- Extrapolate the given field if necessary
+        #define declareExtrapolateType(Type, nullArg)                          \
+            virtual void extrapolate(Field<Type>& fld) const                   \
+            {                                                                  \
+                NotImplemented;                                                \
+            }
+        FOR_ALL_FIELD_TYPES(declareExtrapolateType);
+        #undef declareExtrapolateType
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace SuModels
+} // End namespace patchToPatchExtrapolations
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

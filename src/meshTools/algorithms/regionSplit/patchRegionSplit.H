@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,89 +22,59 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::SuModels::uniformConstant
+    Foam::patchRegionSplit
 
 Description
-    Simple uniform constant laminar flame speed \c Su model
+    ...
 
 SourceFiles
-    uniformConstant_SuModel.C
+    patchRegionSplit.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef uniformConstant_SuModel_H
-#define uniformConstant_SuModel_H
+#ifndef patchRegionSplit_H
+#define patchRegionSplit_H
 
-#include "SuModel.H"
+#include "regionSplitBase.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace SuModels
-{
+
+class polyMesh;
+class polyPatch;
 
 /*---------------------------------------------------------------------------*\
-                            Class uniformConstant Declaration
+                         Class patchRegionSplit Declaration
 \*---------------------------------------------------------------------------*/
 
-class uniformConstant
+class patchRegionSplit
 :
-    public SuModel
+    public regionSplitBase
 {
-    // Private Data
-
-        //- Specified laminar flame speed
-        dimensionedScalar Su_;
-
-
-protected:
-
-        //- Update coefficients from given dictionary
-        virtual bool readCoeffs(const dictionary& dict);
-
-
 public:
 
     //- Runtime type information
-    TypeName("uniformConstant");
+    ClassName("patchRegionSplit");
 
 
     // Constructors
 
-        //- Construct from components
-        uniformConstant
+        //- Construct from a poly-mesh and a set of faces
+        patchRegionSplit
         (
-            const dictionary& dict,
-            const ubRhoThermo& thermo,
-            const compressibleMomentumTransportModel& turbulence
+            const polyMesh& mesh,
+            const labelList& faces
         );
 
-        //- Disallow default bitwise copy construction
-        uniformConstant(const uniformConstant&) = delete;
-
-
-    //- Destructor
-    virtual ~uniformConstant();
-
-
-    // Member Functions
-
-        //- Correct the laminar flame speed
-        virtual void correct()
-        {}
-
-
-    // Member Operators
-
-        //- Disallow default bitwise assignment
-        void operator=(const uniformConstant&) = delete;
+        //- Construct from a poly-patch
+        patchRegionSplit(const polyPatch& patch);
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace SuModels
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

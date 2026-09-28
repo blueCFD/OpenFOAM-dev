@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2022-2023 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2022-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -36,7 +36,7 @@ Description
 #define patchToPatchNormalisedFieldMapper_H
 
 #include "patchToPatchFieldMapper.H"
-#include "patchToPatchStabilisation.H"
+#include "patchToPatchExtrapolation.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -53,8 +53,8 @@ class patchToPatchNormalisedFieldMapper
 {
     // Private Data
 
-        //- Patch stabilisation engine
-        const patchToPatchStabilisation& pS_;
+        //- Patch extrapolation engine
+        const patchToPatchExtrapolation& pE_;
 
 
     // Private Member Functions
@@ -72,15 +72,15 @@ public:
 
     // Constructors
 
-        //- Construct given a patch-to-patch interpolation and stabilisation
+        //- Construct given a patch-to-patch interpolation and extrapolation
         patchToPatchNormalisedFieldMapper
         (
             const patchToPatch& pToP,
-            const patchToPatchStabilisation& pS
+            const patchToPatchExtrapolation& pE
         )
         :
             patchToPatchFieldMapper(pToP),
-            pS_(pS)
+            pE_(pE)
         {}
 
 

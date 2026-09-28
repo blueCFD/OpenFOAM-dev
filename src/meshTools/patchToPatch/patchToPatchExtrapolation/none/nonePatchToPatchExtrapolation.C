@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,54 +23,56 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "uniformConstant_SuModel.H"
+#include "nonePatchToPatchExtrapolation.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace SuModels
+namespace patchToPatchExtrapolations
 {
-    defineTypeNameAndDebug(uniformConstant, 0);
-    addToRunTimeSelectionTable(SuModel, uniformConstant, dictionary);
+    defineTypeNameAndDebug(none, 0);
+    addToRunTimeSelectionTable(patchToPatchExtrapolation, none, word);
 }
-}
-
-
-// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
-
-bool Foam::SuModels::uniformConstant::readCoeffs(const dictionary& dict)
-{
-    SuModel::readCoeffs(dict);
-
-    Su_.read(dict);
-    SuModel::Su_ == Su_;
-
-    return true;
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::SuModels::uniformConstant::uniformConstant
-(
-    const dictionary& dict,
-    const ubRhoThermo& thermo,
-    const compressibleMomentumTransportModel& turbulence
-)
+Foam::patchToPatchExtrapolations::none::none()
 :
-    SuModel(thermo, turbulence),
-    Su_("Su", dimensions::velocity, dict)
-{
-    SuModel::Su_ == Su_;
-}
+    patchToPatchExtrapolation()
+{}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::SuModels::uniformConstant::~uniformConstant()
+Foam::patchToPatchExtrapolations::none::~none()
 {}
+
+
+// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
+
+void Foam::patchToPatchExtrapolations::none::update
+(
+    const polyPatch& patch,
+    const PackedBoolList& faceCoupleds
+)
+{
+    patchToPatchExtrapolation::update(faceCoupleds);
+
+    if (extrapolation_)
+    {
+        FatalErrorInFunction
+            << "Mapping of patch '" << patch.name() << "' is "
+            << "incomplete and requires extrapolation, but extrapolation is "
+            << "deactivated because the selected extrapolation engine is of "
+            << "type '" << typeName << "'. Either improve the correspondence "
+            << "between the patches, or select a functional extrapolation "
+            << "engine." << exit(FatalError);
+    }
+}
 
 
 // ************************************************************************* //

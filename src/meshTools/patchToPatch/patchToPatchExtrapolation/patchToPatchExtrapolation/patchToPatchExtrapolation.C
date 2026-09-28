@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2024-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2023-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,54 +23,67 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "uniformConstant_SuModel.H"
-#include "addToRunTimeSelectionTable.H"
+#include "patchToPatchExtrapolation.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace SuModels
-{
-    defineTypeNameAndDebug(uniformConstant, 0);
-    addToRunTimeSelectionTable(SuModel, uniformConstant, dictionary);
-}
+    defineTypeNameAndDebug(patchToPatchExtrapolation, 0);
+    defineRunTimeSelectionTable(patchToPatchExtrapolation, word);
 }
 
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
-bool Foam::SuModels::uniformConstant::readCoeffs(const dictionary& dict)
+void Foam::patchToPatchExtrapolation::update
+(
+    const PackedBoolList& faceCoupleds
+)
 {
-    SuModel::readCoeffs(dict);
+    uncoupledFaces_ =
+        selectIndices(faceCoupleds, [](const bool b) { return !b ;});
 
-    Su_.read(dict);
-    SuModel::Su_ == Su_;
+    extrapolation_ = uncoupledFaces_.size();
 
-    return true;
+    reduce(extrapolation_, orOp());
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::SuModels::uniformConstant::uniformConstant
-(
-    const dictionary& dict,
-    const ubRhoThermo& thermo,
-    const compressibleMomentumTransportModel& turbulence
-)
+Foam::patchToPatchExtrapolation::patchToPatchExtrapolation()
 :
-    SuModel(thermo, turbulence),
-    Su_("Su", dimensions::velocity, dict)
-{
-    SuModel::Su_ == Su_;
-}
+    extrapolation_(false)
+{}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::SuModels::uniformConstant::~uniformConstant()
+Foam::patchToPatchExtrapolation::~patchToPatchExtrapolation()
 {}
+
+
+// * * * * * * * * * * * * * * * * Selector  * * * * * * * * * * * * * * * * //
+
+Foam::autoPtr<Foam::patchToPatchExtrapolation>
+Foam::patchToPatchExtrapolation::New(const word& type)
+{
+    wordConstructorTable::iterator cstrIter =
+        wordConstructorTablePtr_->find(type);
+
+    if (cstrIter == wordConstructorTablePtr_->end())
+    {
+        FatalErrorInFunction
+            << "Unknown " << typeName << " type "
+            << type << endl << endl
+            << "Valid " << typeName << " types are : " << endl
+            << wordConstructorTablePtr_->sortedToc()
+            << exit(FatalError);
+    }
+
+    return cstrIter()();
+}
 
 
 // ************************************************************************* //
