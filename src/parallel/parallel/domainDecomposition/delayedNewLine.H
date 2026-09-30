@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,67 +22,47 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::patchRegionSplit
+    Foam::delayedNewLine
 
 Description
-    ...
-
-SourceFiles
-    patchRegionSplit.C
+    Object that streams out as a new line, except for the first time in which
+    it is printed. Useful for putting newlines between items in a list, but not
+    putting a newline at the start of that list.
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef patchRegionSplit_H
-#define patchRegionSplit_H
+#ifndef delayedNewLine_H
+#define delayedNewLine_H
 
-#include "regionSplitBase.H"
+#include "Ostream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-class polyMesh;
-class polyPatch;
-
 /*---------------------------------------------------------------------------*\
-                         Class patchRegionSplit Declaration
+                        Class delayedNewLine Declaration
 \*---------------------------------------------------------------------------*/
 
-class patchRegionSplit
-:
-    public regionSplitBase
+class delayedNewLine
 {
-    // Private constructors
-
-        //- Construct from a poly-mesh and a primitive patch
-        template<class Patch>
-        patchRegionSplit
-        (
-            const polyMesh& mesh,
-            const Patch& patch
-        );
-
+    mutable bool first_;
 
 public:
 
-    //- Runtime type information
-    ClassName("patchRegionSplit");
+    delayedNewLine()
+    :
+        first_(true)
+    {}
 
-
-    // Constructors
-
-        //- Construct from a poly-mesh and a set of faces
-        patchRegionSplit
-        (
-            const polyMesh& mesh,
-            const labelList& faces
-        );
-
-        //- Construct from a poly-patch
-        patchRegionSplit(const polyPatch& patch);
+    friend Ostream& operator<<(Ostream& os, const delayedNewLine& dnl)
+    {
+        if (!dnl.first_) os << nl;
+        dnl.first_ = false;
+        return os;
+    }
 };
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
