@@ -126,8 +126,6 @@ bool Foam::dynamicCode::resolveTemplates
     {
         const fileName& templateName = templateNames[fileI];
 
-        Pout << "Hmm 1" << endl;
-
         const fileName file
         (
             findConfigFile
@@ -137,8 +135,6 @@ bool Foam::dynamicCode::resolveTemplates
                 "system"
             )
         );
-
-        Pout << "Hmm 2" << endl;
 
         if (file.empty())
         {
@@ -503,7 +499,6 @@ bool Foam::dynamicCode::copyOrCreateFiles(const bool verbose) const
     {
         Pout<< "Creating new library in " << libRelPath() << endl;
     }
-    Pout << "Hello 1" << endl;
 
     HashTable<string> filterVars(varSubstitutions_);
 
@@ -512,8 +507,6 @@ bool Foam::dynamicCode::copyOrCreateFiles(const bool verbose) const
     {
         filterVars.set(iter.key(), iter());
     }
-
-    Pout << "Hello 2" << endl;
 
     const label nFiles =
         compileFiles_.size() + copyFiles_.size();
@@ -528,7 +521,6 @@ bool Foam::dynamicCode::copyOrCreateFiles(const bool verbose) const
         resolvedFiles,
         badFiles
     );
-    Pout << "Hello 3" << endl;
 
     dynamicCode::resolveTemplates
     (
@@ -536,8 +528,6 @@ bool Foam::dynamicCode::copyOrCreateFiles(const bool verbose) const
         resolvedFiles,
         badFiles
     );
-
-    Pout << "Hello 4" << endl;
 
     if (!badFiles.empty())
     {
@@ -547,15 +537,11 @@ bool Foam::dynamicCode::copyOrCreateFiles(const bool verbose) const
             << exit(FatalError);
     }
 
-    Pout << "Hello 5" << endl;
-
     // Create dir
     const fileName outputDir(codePath());
 
     // Create dir
     mkDir(outputDir);
-
-    Pout << "Hello 6" << endl;
 
     // Copy/filter files
     forAll(resolvedFiles, fileI)
@@ -588,18 +574,11 @@ bool Foam::dynamicCode::copyOrCreateFiles(const bool verbose) const
         dynamicCode::copyAndFilter(is, os, filterVars);
     }
 
-    Pout << "Hello 7" << endl;
-
-
     // Create Make/files + Make/options
     createMakeFiles();
     createMakeOptions();
 
-    Pout << "Hello 8" << endl;
-
     writeDigest();
-
-    Pout << "Hello 10" << endl;
 
     return true;
 }
