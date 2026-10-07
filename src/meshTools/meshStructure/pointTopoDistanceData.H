@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2013-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -37,8 +37,8 @@ SourceFiles
 #ifndef pointTopoDistanceData_H
 #define pointTopoDistanceData_H
 
-#include "point.T.H"
-#include "tensor.H"
+#include "scalar.H"
+#include "contiguous.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,14 +50,10 @@ class polyPatch;
 class polyMesh;
 class transformer;
 
-
 // Forward declaration of friend functions and operators
-
 class pointTopoDistanceData;
-
-Istream& operator>>(Istream&, pointTopoDistanceData&);
-Ostream& operator<<(Ostream&, const pointTopoDistanceData&);
-
+inline Istream& operator>>(Istream&, pointTopoDistanceData&);
+inline Ostream& operator<<(Ostream&, const pointTopoDistanceData&);
 
 /*---------------------------------------------------------------------------*\
                     Class pointTopoDistanceData Declaration
@@ -93,11 +89,11 @@ public:
 
         // Access
 
-
             inline label data() const
             {
                 return data_;
             }
+
             inline label distance() const
             {
                 return distance_;
@@ -179,20 +175,31 @@ public:
 
             //- Same (like operator==)
             template<class TrackingData>
-            inline bool equal(const pointTopoDistanceData&, TrackingData&)
-            const;
+            inline bool equal
+            (
+                const pointTopoDistanceData&,
+                TrackingData&
+            ) const;
 
 
     // Member Operators
 
-        // Needed for List IO
         inline bool operator==(const pointTopoDistanceData&) const;
         inline bool operator!=(const pointTopoDistanceData&) const;
 
+
     // IOstream Operators
 
-        friend Ostream& operator<<(Ostream&, const pointTopoDistanceData&);
-        friend Istream& operator>>(Istream&, pointTopoDistanceData&);
+        inline friend Ostream& operator<<
+        (
+            Ostream&,
+            const pointTopoDistanceData&
+        );
+        inline friend Istream& operator>>
+        (
+            Istream&,
+            pointTopoDistanceData&
+        );
 };
 
 

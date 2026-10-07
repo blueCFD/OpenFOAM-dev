@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2011-2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -23,14 +23,11 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "topoDistanceData.H"
 #include "polyMesh.H"
-
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
-
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// Null constructor
 inline Foam::topoDistanceData::topoDistanceData()
 :
     data_(-1),
@@ -38,7 +35,6 @@ inline Foam::topoDistanceData::topoDistanceData()
 {}
 
 
-// Construct from components
 inline Foam::topoDistanceData::topoDistanceData
 (
     const label data,
@@ -59,7 +55,6 @@ inline bool Foam::topoDistanceData::valid(TrackingData& td) const
 }
 
 
-// No geometric data so never any problem on cyclics
 template<class TrackingData>
 inline bool Foam::topoDistanceData::sameGeometry
 (
@@ -73,7 +68,6 @@ inline bool Foam::topoDistanceData::sameGeometry
 }
 
 
-// No geometric data.
 template<class TrackingData>
 inline void Foam::topoDistanceData::transform
 (
@@ -85,7 +79,6 @@ inline void Foam::topoDistanceData::transform
 {}
 
 
-// Update cell with neighbouring face information
 template<class TrackingData>
 inline bool Foam::topoDistanceData::updateCell
 (
@@ -109,7 +102,6 @@ inline bool Foam::topoDistanceData::updateCell
 }
 
 
-// Update face with neighbouring cell information
 template<class TrackingData>
 inline bool Foam::topoDistanceData::updateFace
 (
@@ -121,8 +113,6 @@ inline bool Foam::topoDistanceData::updateFace
     TrackingData&
 )
 {
-    // From cell to its faces.
-
     if (distance_ == -1)
     {
         data_ = neighbourInfo.data_;
@@ -136,7 +126,6 @@ inline bool Foam::topoDistanceData::updateFace
 }
 
 
-// Update face with coupled face information
 template<class TrackingData>
 inline bool Foam::topoDistanceData::updateFace
 (
@@ -147,7 +136,6 @@ inline bool Foam::topoDistanceData::updateFace
     TrackingData&
 )
 {
-    // From face to face (e.g. coupled faces)
     if (distance_ == -1)
     {
         operator=(neighbourInfo);
@@ -188,6 +176,28 @@ inline bool Foam::topoDistanceData::operator!=
 ) const
 {
     return !(*this == rhs);
+}
+
+
+// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
+
+inline Foam::Ostream& Foam::operator<<
+(
+    Foam::Ostream& os,
+    const Foam::topoDistanceData& wDist
+)
+{
+    return os << wDist.data_ << token::SPACE << wDist.distance_;
+}
+
+
+inline Foam::Istream& Foam::operator>>
+(
+    Foam::Istream& is,
+    Foam::topoDistanceData& wDist
+)
+{
+    return is >> wDist.data_ >> wDist.distance_;
 }
 
 
