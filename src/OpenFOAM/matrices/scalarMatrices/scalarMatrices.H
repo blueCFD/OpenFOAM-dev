@@ -27,9 +27,8 @@ Class
 Description
     Scalar matrices
 
-    LUDecompose for scalarSymmetricSquareMatrix implements the Cholesky
-    decomposition method from JAMA, a public-domain library developed at NIST,
-    available at http://math.nist.gov/tnt/index.html
+    The LUDecompose methods for symmetric and non-symmetric matrices use an ikj
+    loop structure to optimise row access for the C++ matrix storage structure.
 
 SourceFiles
     scalarMatrices.C
@@ -72,19 +71,21 @@ void solve
     const List<Type>& source
 );
 
-//- LU decompose the matrix with pivoting
+//- LU decompose the matrix with scaled pivoting
 void LUDecompose
 (
     scalarSquareMatrix& matrix,
-    labelList& pivotIndices
+    labelList& pivotIndices,
+    scalarList& scale
 );
 
-//- LU decompose the matrix with pivoting.
+//- LU decompose the matrix with scaled pivoting.
 //  sign is -1 for odd number of row interchanges and 1 for even number.
 void LUDecompose
 (
     scalarSquareMatrix& matrix,
     labelList& pivotIndices,
+    scalarList& scale,
     label& sign
 );
 
@@ -93,7 +94,7 @@ void LUDecompose
 void LUDecompose(scalarSquareMatrix& A, const scalar rowTol = 0);
 
 //- LU decompose the matrix into a lower (L) and upper (U) part. U = L.T()
-void LUDecompose(scalarSymmetricSquareMatrix& matrix);
+void LUDecompose(scalarSymmetricSquareMatrix& matrix, const scalar rowTol = 0);
 
 //- LU back-substitution with given source, returning the solution
 //  in the source
