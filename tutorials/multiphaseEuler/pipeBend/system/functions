@@ -16,6 +16,19 @@ FoamFile
 
 #includeFunc filterObjectsAsFiles
 
+populationBalanceSetSizeDistribution
+{
+    type                populationBalanceSetSizeDistribution;
+    libs                ("libmultiphaseEulerFunctionObjects.so");
+    phase               particles;
+    distribution
+    {
+        type                multiFixedValue;
+        Q                   3;
+        file                "constant/initialDistribution.particles";
+    }
+}
+
 #includeFunc populationBalanceSizeDistribution
 (
     name=probabilityDensity.afterBend_1d,

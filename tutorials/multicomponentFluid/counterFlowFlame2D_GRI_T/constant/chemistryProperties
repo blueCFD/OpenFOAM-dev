@@ -5,19 +5,31 @@
     \\  /    A nd           | Version:  dev
      \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
-
-type                populationBalanceSetSizeDistribution;
-libs                ("libmultiphaseEulerFunctionObjects.so");
-
-phase               particles;
-
-distribution
+FoamFile
 {
-    type                multiFixedValue;
-    Q                   3;
-    file                "constant/initialDistribution.particles";
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      chemistryProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#includeEtc "caseDicts/solvers/chemistry/TDAC/tabulationProperties.cfg"
+
+initialChemicalTimeStep 1e-7;
+
+ode
+{
+    solver          seulex;
+    absTol          1e-8;
+    relTol          1e-1;
 }
 
-writeControl        writeTime;
+tabulation
+{
+    tolerance   3e-3;
+}
+
+#include "reactionsGRI"
 
 // ************************************************************************* //
