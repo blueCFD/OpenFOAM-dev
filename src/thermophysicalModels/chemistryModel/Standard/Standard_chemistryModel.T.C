@@ -114,7 +114,7 @@ Foam::chemistryModels::Standard<ThermoType>::Standard
             }
         }
 
-        this->thermo().syncSpeciesActive();
+        this->thermo().syncActiveSpecies();
     }
 
     if (log_)
@@ -829,7 +829,11 @@ Foam::scalar Foam::chemistryModels::Standard<ThermoType>::solve
 
     if (reduction_)
     {
-        this->thermo().syncSpeciesActive();
+        this->thermo().syncActiveSpecies();
+    }
+    else
+    {
+        this->thermo().availableSpecies() = true;
     }
 
     return deltaTMin;
