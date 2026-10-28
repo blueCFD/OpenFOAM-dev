@@ -308,9 +308,7 @@ class multicomponentThermo::implementation
 :
     virtual public multicomponentThermo
 {
-protected:
-
-    // Protected data
+    // Private data
 
         //- The name of the default specie. The mass fraction of which is
         //  derived from the other species rather than solved. Also used as the
@@ -318,7 +316,14 @@ protected:
         word defaultSpecieName_;
 
         //- The index of the default specie
+        //  -1 if no default specie selected
+        //  -2 if the specie mass-fractions are not normal i.e. do not sum to 1
         label defaultSpeciei_;
+
+        //- Mass-fraction sum error limit for scaling normalisation
+        //  Defaults to 1e-3
+        //  the sum of the mass-fractions is tested to be within 1 +/- 1e-3
+        scalar normalisationLimit_;
 
         //- Species mass fractions
         PtrList<volScalarField> Y_;
@@ -326,13 +331,10 @@ protected:
         mutable tmp<volScalarField> Ydefault_;
 
 
-    // Protected Member Functions
+    // Private Member Functions
 
         //- Scale the mass fractions to sum to 1
-        void correctMassFractions
-        (
-            const speciesTable& species
-        );
+        void scaleMassFractions();
 
 
 public:
@@ -346,7 +348,7 @@ public:
             const speciesTable&,
             const fvMesh&,
             const word&,
-            const bool requiresDefaultSpecie = true
+            const bool normal = true
         );
 
 
@@ -357,6 +359,8 @@ public:
     // Member Functions
 
         //- The index of the default specie
+        //  -1 if no default specie selected
+        //  -2 if the specie mass-fractions are not normal i.e. do not sum to 1
         virtual label defaultSpecie() const;
 
         //- Synchronise the specie active flags
