@@ -478,9 +478,6 @@ $(limitedSchemes)/QUICK/QUICK.T.C
 $(limitedSchemes)/MUSCL/MUSCL.T.C
 $(limitedSchemes)/UMIST/UMIST.T.C
 $(limitedSchemes)/Phi/Phi.C
-$(limitedSchemes)/filteredLinear/filteredLinear.C
-$(limitedSchemes)/filteredLinear2/filteredLinear2.C
-$(limitedSchemes)/filteredLinear3/filteredLinear3.C
 $(limitedSchemes)/limitWith/limitWith.C
 
 multivariateSchemes = $(surfaceInterpolation)/multivariateSchemes

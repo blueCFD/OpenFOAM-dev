@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "LimitedScheme.T.H"
-#include "Limited01.T.H"
+#include "Limited.T.H"
 #include "Gamma.T.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -38,16 +38,6 @@ namespace Foam
     (
         limitedGamma,
         LimitedLimiter,
-        GammaLimiter,
-        NVDTVD,
-        magSqr,
-        scalar
-    )
-
-    makeLLimitedSurfaceInterpolationTypeScheme
-    (
-        Gamma01,
-        Limited01Limiter,
         GammaLimiter,
         NVDTVD,
         magSqr,
