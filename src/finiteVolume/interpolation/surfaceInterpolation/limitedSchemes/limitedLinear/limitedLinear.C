@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "LimitedScheme.T.H"
-#include "Limited.T.H"
+#include "Filtered.T.H"
 #include "limitedLinear.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -41,8 +41,8 @@ namespace Foam
 
     makeLLimitedSurfaceInterpolationTypeScheme
     (
-        limitedLimitedLinear,
-        LimitedLimiter,
+        filteredLimitedLinear,
+        FilteredLimiter,
         limitedLinearLimiter,
         NVDTVD,
         magSqr,

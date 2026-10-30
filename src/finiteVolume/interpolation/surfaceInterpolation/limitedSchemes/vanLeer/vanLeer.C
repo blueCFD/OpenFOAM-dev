@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "LimitedScheme.T.H"
-#include "Limited.T.H"
+#include "Filtered.T.H"
 #include "vanLeer.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -36,8 +36,8 @@ namespace Foam
 
     makeLLimitedSurfaceInterpolationTypeScheme
     (
-        limitedVanLeer,
-        LimitedLimiter,
+        filteredVanLeer,
+        FilteredLimiter,
         vanLeerLimiter,
         NVDTVD,
         magSqr,

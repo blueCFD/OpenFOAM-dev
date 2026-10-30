@@ -477,7 +477,6 @@ $(limitedSchemes)/SuperBee/SuperBee.T.C
 $(limitedSchemes)/QUICK/QUICK.T.C
 $(limitedSchemes)/MUSCL/MUSCL.T.C
 $(limitedSchemes)/UMIST/UMIST.T.C
-$(limitedSchemes)/Phi/Phi.C
 $(limitedSchemes)/limitWith/limitWith.C
 
 multivariateSchemes = $(surfaceInterpolation)/multivariateSchemes

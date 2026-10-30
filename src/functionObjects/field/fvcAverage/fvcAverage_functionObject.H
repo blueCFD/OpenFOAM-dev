@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2026 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,93 +22,75 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::PhiLimiter
+    Foam::functionObjects::fvcAverage
 
 Description
-    Class with limiter function which returns the limiter for the
-    Phi interpolation scheme.
+    Calculates a cell-centred volField by averaging the face values of a
+    surfaceField using fvc::average.
 
-    Used in conjunction with the template class PhiScheme.
+See also
+    Foam::functionObjects::reconstruct
 
 SourceFiles
-    Phi.C
+    fvcAverage.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef Phi_H
-#define Phi_H
+#ifndef fvcAverage_functionObject_H
+#define fvcAverage_functionObject_H
 
-#include "vector.H"
+#include "fieldExpression.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+namespace functionObjects
+{
 
 /*---------------------------------------------------------------------------*\
-                         Class PhiLimiter Declaration
+                          Class fvcAverage Declaration
 \*---------------------------------------------------------------------------*/
 
-class PhiLimiter
+class fvcAverage
+:
+    public fieldExpression
 {
-    scalar k_;
+    // Private Member Functions
+
+        //- Calculate the magnitude of the field and register the result
+        template<class Type>
+        inline bool calcFvcAverage();
+
+        //- Calculate the fvcAverageion field and return true if successful
+        virtual bool calc();
+
 
 public:
 
-    PhiLimiter(Istream& is)
-    :
-        k_(readScalar(is))
-    {
-        if (k_ < 0 || k_ > 1)
-        {
-            FatalIOErrorInFunction(is)
-                << "coefficient = " << k_
-                << " should be >= 0 and <= 1"
-                << exit(FatalIOError);
-        }
-    }
+    //- Runtime type information
+    TypeName("fvcAverage");
 
-    scalar limiter
-    (
-        const scalar cdWeight,
-        const scalar faceFlux,
-        const vector& PhiP,
-        const vector& PhiN,
-        const vector& Sf,
-        const scalar&
-    ) const
-    {
-        scalar phiP = Sf&PhiP;
-        scalar phiN = Sf&PhiN;
 
-        scalar phiU;
+    // Constructors
 
-        if (faceFlux > 0)
-        {
-            phiU = phiP;
-        }
-        else
-        {
-            phiU = phiN;
-        }
+        //- Construct from Time and dictionary
+        fvcAverage
+        (
+            const word& name,
+            const Time& runTime,
+            const dictionary& dict
+        );
 
-        scalar phiCD = cdWeight*phiP + (1 - cdWeight)*phiN;
 
-        // Calculate the effective limiter for the Phi interpolation
-        // scalar PLimiter =
-        //    (1.0 - k_) + k_*(faceFlux - phiU)/stabilise(phiCD - phiU, small);
-
-        scalar PLimiter =
-            ((faceFlux - phiU)/stabilise(phiCD - phiU, small) + k_);
-
-        // Limit the limiter between upwind and central
-        return max(min(PLimiter, 1), 0);
-    }
+    //- Destructor
+    virtual ~fvcAverage();
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace functionObjects
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
