@@ -38,21 +38,20 @@ Modifications
 #include "chemkinReader.H"
 #include "IFstream.H"
 #include "atomicWeights.H"
-#include "ReactionProxy.T.H"
-#include "IrreversibleReaction.T.H"
-#include "ReversibleReaction.T.H"
-#include "NonEquilibriumReversibleReaction.T.H"
-#include "ArrheniusReactionRate.H"
-#include "thirdBodyArrheniusReactionRate.H"
-#include "pLogReactionRate.H"
-#include "FallOffReactionRate.T.H"
-#include "ChemicallyActivatedReactionRate.T.H"
-#include "LindemannFallOffFunction.H"
-#include "TroeFallOffFunction.H"
-#include "SRIFallOffFunction.H"
-#include "LandauTellerReactionRate.H"
-#include "JanevReactionRate.H"
-#include "powerSeriesReactionRate.H"
+#include "Irreversible_reaction.T.H"
+#include "Reversible_reaction.T.H"
+#include "NonEquilibriumReversible_reaction.T.H"
+#include "Arrhenius_reactionRate.H"
+#include "ThirdBody_reactionRate.H"
+#include "pLog_reactionRate.H"
+#include "FallOff_reactionRate.H"
+#include "ChemicallyActivated_reactionRate.H"
+#include "Lindemann_fallOffFunction.H"
+#include "Troe_fallOffFunction.H"
+#include "SRI_fallOffFunction.H"
+#include "LandauTeller_reactionRate.H"
+#include "Janev_reactionRate.H"
+#include "powerSeries_reactionRate.H"
 #include "addToRunTimeSelectionTable.H"
 
 
@@ -86,6 +85,8 @@ const char* Foam::chemkinReader::fallOffFunctionNames[4] =
     "SRI",
     "unknownFallOffFunctionType"
 };
+
+const char* Foam::chemkinReader::reactionName_ = "un-named-reaction-";
 
 void Foam::chemkinReader::initReactionKeywordTable()
 {
@@ -179,7 +180,6 @@ void Foam::chemkinReader::setTlimits
     const scalar Thigh
 )
 {
-
     reactions_.Tlow() = max(reactions_.Tlow(), Tlow);
     reactions_.Thigh() = min(reactions_.Thigh(), Thigh);
 }
@@ -200,15 +200,16 @@ void Foam::chemkinReader::addReactionType
         {
             reactions_.append
             (
-                new IrreversibleReaction<thermoPhysics, ReactionRateType>
+                new reactions::Irreversible<ReactionRateType>
                 (
-                    ReactionProxy<thermoPhysics>
+                    reactionCoeffs
                     (
+                        reactionName_ + Foam::name(reactions_.size()),
                         speciesTable_,
-                        speciesThermoList(),
                         lhs.shrink(),
                         rhs.shrink()
                     ),
+                    SpecieThermosRef<thermoPhysics>(speciesThermoList()),
                     rr
                 )
             );
@@ -219,15 +220,16 @@ void Foam::chemkinReader::addReactionType
         {
             reactions_.append
             (
-                new ReversibleReaction<thermoPhysics, ReactionRateType>
+                new reactions::Reversible<ReactionRateType, thermoPhysics>
                 (
-                    ReactionProxy<thermoPhysics>
+                    reactionCoeffs
                     (
+                        reactionName_ + Foam::name(reactions_.size()),
                         speciesTable_,
-                        speciesThermoList(),
                         lhs.shrink(),
                         rhs.shrink()
                     ),
+                    SpecieThermosRef<thermoPhysics>(speciesThermoList()),
                     rr
                 )
             );
@@ -283,21 +285,24 @@ void Foam::chemkinReader::addPressureDependentReaction
                 rType,
                 lhs, rhs,
                 PressureDependencyType
-                    <ArrheniusReactionRate, LindemannFallOffFunction>
+                <
+                    reactionRates::Arrhenius,
+                    fallOffFunctions::Lindemann
+                >
                 (
-                    ArrheniusReactionRate
+                    reactionRates::Arrhenius
                     (
                         Afactor0*k0Coeffs[0],
                         k0Coeffs[1],
                         k0Coeffs[2]/RR
                     ),
-                    ArrheniusReactionRate
+                    reactionRates::Arrhenius
                     (
                         AfactorInf*kInfCoeffs[0],
                         kInfCoeffs[1],
                         kInfCoeffs[2]/RR
                     ),
-                    LindemannFallOffFunction(),
+                    fallOffFunctions::Lindemann(),
                     thirdBodyEfficiencies
                     (
                         speciesTable_,
@@ -337,21 +342,24 @@ void Foam::chemkinReader::addPressureDependentReaction
                 rType,
                 lhs, rhs,
                 PressureDependencyType
-                    <ArrheniusReactionRate, TroeFallOffFunction>
+                <
+                    reactionRates::Arrhenius,
+                    fallOffFunctions::Troe
+                >
                 (
-                    ArrheniusReactionRate
+                    reactionRates::Arrhenius
                     (
                         Afactor0*k0Coeffs[0],
                         k0Coeffs[1],
                         k0Coeffs[2]/RR
                     ),
-                    ArrheniusReactionRate
+                    reactionRates::Arrhenius
                     (
                         AfactorInf*kInfCoeffs[0],
                         kInfCoeffs[1],
                         kInfCoeffs[2]/RR
                     ),
-                    TroeFallOffFunction
+                    fallOffFunctions::Troe
                     (
                         TroeCoeffs[0],
                         TroeCoeffs[1],
@@ -398,21 +406,24 @@ void Foam::chemkinReader::addPressureDependentReaction
                 rType,
                 lhs, rhs,
                 PressureDependencyType
-                    <ArrheniusReactionRate, SRIFallOffFunction>
+                <
+                    reactionRates::Arrhenius,
+                    fallOffFunctions::SRI
+                >
                 (
-                    ArrheniusReactionRate
+                    reactionRates::Arrhenius
                     (
                         Afactor0*k0Coeffs[0],
                         k0Coeffs[1],
                         k0Coeffs[2]/RR
                     ),
-                    ArrheniusReactionRate
+                    reactionRates::Arrhenius
                     (
                         AfactorInf*kInfCoeffs[0],
                         kInfCoeffs[1],
                         kInfCoeffs[2]/RR
                     ),
-                    SRIFallOffFunction
+                    fallOffFunctions::SRI
                     (
                         SRICoeffs[0],
                         SRICoeffs[1],
@@ -523,26 +534,26 @@ void Foam::chemkinReader::addReaction
 
                 reactions_.append
                 (
-                    new NonEquilibriumReversibleReaction
+                    new reactions::NonEquilibriumReversible
                     <
-                        thermoPhysics,
-                        ArrheniusReactionRate
+                        reactionRates::Arrhenius
                     >
                     (
-                        ReactionProxy<thermoPhysics>
+                        reactionCoeffs
                         (
+                            reactionName_ + Foam::name(reactions_.size()),
                             speciesTable_,
-                            speciesThermoList(),
                             lhs.shrink(),
                             rhs.shrink()
                         ),
-                        ArrheniusReactionRate
+                        SpecieThermosRef<thermoPhysics>(speciesThermoList()),
+                        reactionRates::Arrhenius
                         (
                             Afactor*ArrheniusCoeffs[0],
                             ArrheniusCoeffs[1],
                             ArrheniusCoeffs[2]/RR
                         ),
-                        ArrheniusReactionRate
+                        reactionRates::Arrhenius
                         (
                             AfactorRev*reverseArrheniusCoeffs[0],
                             reverseArrheniusCoeffs[1],
@@ -557,7 +568,7 @@ void Foam::chemkinReader::addReaction
                 (
                     rType,
                     lhs, rhs,
-                    ArrheniusReactionRate
+                    reactionRates::Arrhenius
                     (
                         Afactor*ArrheniusCoeffs[0],
                         ArrheniusCoeffs[1],
@@ -578,24 +589,27 @@ void Foam::chemkinReader::addReaction
 
                 reactions_.append
                 (
-                    new NonEquilibriumReversibleReaction
+                    new reactions::NonEquilibriumReversible
                     <
-                        thermoPhysics,
-                        thirdBodyArrheniusReactionRate
+                        reactionRates::ThirdBody<reactionRates::Arrhenius>
                     >
                     (
-                        ReactionProxy<thermoPhysics>
+                        reactionCoeffs
                         (
+                            reactionName_ + Foam::name(reactions_.size()),
                             speciesTable_,
-                            speciesThermoList(),
                             lhs.shrink(),
                             rhs.shrink()
                         ),
-                        thirdBodyArrheniusReactionRate
+                        SpecieThermosRef<thermoPhysics>(speciesThermoList()),
+                        reactionRates::ThirdBody<reactionRates::Arrhenius>
                         (
-                            Afactor*concFactor*ArrheniusCoeffs[0],
-                            ArrheniusCoeffs[1],
-                            ArrheniusCoeffs[2]/RR,
+                            reactionRates::Arrhenius
+                            (
+                                Afactor*concFactor*ArrheniusCoeffs[0],
+                                ArrheniusCoeffs[1],
+                                ArrheniusCoeffs[2]/RR
+                            ),
                             thirdBodyEfficiencies
                             (
                                 speciesTable_,
@@ -603,11 +617,14 @@ void Foam::chemkinReader::addReaction
                                 efficiencies
                             )
                         ),
-                        thirdBodyArrheniusReactionRate
+                        reactionRates::ThirdBody<reactionRates::Arrhenius>
                         (
-                            AfactorRev*concFactor*reverseArrheniusCoeffs[0],
-                            reverseArrheniusCoeffs[1],
-                            reverseArrheniusCoeffs[2]/RR,
+                            reactionRates::Arrhenius
+                            (
+                                AfactorRev*concFactor*reverseArrheniusCoeffs[0],
+                                reverseArrheniusCoeffs[1],
+                                reverseArrheniusCoeffs[2]/RR
+                            ),
                             thirdBodyEfficiencies
                             (
                                 speciesTable_,
@@ -624,11 +641,14 @@ void Foam::chemkinReader::addReaction
                 (
                     rType,
                     lhs, rhs,
-                    thirdBodyArrheniusReactionRate
+                    reactionRates::ThirdBody<reactionRates::Arrhenius>
                     (
-                        Afactor*concFactor*ArrheniusCoeffs[0],
-                        ArrheniusCoeffs[1],
-                        ArrheniusCoeffs[2]/RR,
+                        reactionRates::Arrhenius
+                        (
+                            Afactor*concFactor*ArrheniusCoeffs[0],
+                            ArrheniusCoeffs[1],
+                            ArrheniusCoeffs[2]/RR
+                        ),
                         thirdBodyEfficiencies
                         (
                             speciesTable_,
@@ -645,7 +665,7 @@ void Foam::chemkinReader::addReaction
             const scalarList& pLogCoeffs =
                 reactionCoeffsTable[reactionRateTypeNames[rrType]];
 
-            List<pLogReactionRate::pCoeffs> pLogCoeffList
+            List<reactionRates::pLog::pCoeffs> pLogCoeffList
             (
                 pLogCoeffs.size()/4
             );
@@ -668,14 +688,14 @@ void Foam::chemkinReader::addReaction
             (
                 rType,
                 lhs, rhs,
-                pLogReactionRate(pLogCoeffList)
+                reactionRates::pLog(pLogCoeffList)
             );
 
             break;
         }
         case unimolecularFallOff:
         {
-            addPressureDependentReaction<FallOffReactionRate>
+            addPressureDependentReaction<reactionRates::FallOff>
             (
                 rType,
                 fofType,
@@ -694,7 +714,7 @@ void Foam::chemkinReader::addReaction
         }
         case chemicallyActivatedBimolecular:
         {
-            addPressureDependentReaction<ChemicallyActivatedReactionRate>
+            addPressureDependentReaction<reactionRates::ChemicallyActivated>
             (
                 rType,
                 fofType,
@@ -733,20 +753,20 @@ void Foam::chemkinReader::addReaction
 
                 reactions_.append
                 (
-                    new NonEquilibriumReversibleReaction
+                    new reactions::NonEquilibriumReversible
                     <
-                        thermoPhysics,
-                        LandauTellerReactionRate
+                        reactionRates::LandauTeller
                     >
                     (
-                        ReactionProxy<thermoPhysics>
+                        reactionCoeffs
                         (
+                            reactionName_ + Foam::name(reactions_.size()),
                             speciesTable_,
-                            speciesThermoList(),
                             lhs.shrink(),
                             rhs.shrink()
                         ),
-                        LandauTellerReactionRate
+                        SpecieThermosRef<thermoPhysics>(speciesThermoList()),
+                        reactionRates::LandauTeller
                         (
                             Afactor*ArrheniusCoeffs[0],
                             ArrheniusCoeffs[1],
@@ -754,7 +774,7 @@ void Foam::chemkinReader::addReaction
                             LandauTellerCoeffs[0],
                             LandauTellerCoeffs[1]
                         ),
-                        LandauTellerReactionRate
+                        reactionRates::LandauTeller
                         (
                             AfactorRev*reverseArrheniusCoeffs[0],
                             reverseArrheniusCoeffs[1],
@@ -771,7 +791,7 @@ void Foam::chemkinReader::addReaction
                 (
                     rType,
                     lhs, rhs,
-                    LandauTellerReactionRate
+                    reactionRates::LandauTeller
                     (
                         Afactor*ArrheniusCoeffs[0],
                         ArrheniusCoeffs[1],
@@ -794,7 +814,7 @@ void Foam::chemkinReader::addReaction
             (
                 rType,
                 lhs, rhs,
-                JanevReactionRate
+                reactionRates::Janev
                 (
                     Afactor*ArrheniusCoeffs[0],
                     ArrheniusCoeffs[1],
@@ -815,7 +835,7 @@ void Foam::chemkinReader::addReaction
             (
                 rType,
                 lhs, rhs,
-                powerSeriesReactionRate
+                reactionRates::powerSeries
                 (
                     Afactor*ArrheniusCoeffs[0],
                     ArrheniusCoeffs[1],
