@@ -122,12 +122,12 @@ public:
 
     // Member Operators
 
-        virtual void operator=(const valuePointPatchField<Type>&) {}
-        virtual void operator=(const pointPatchField<Type>&) {}
-        virtual void operator=(pointPatchField<Type>&&) {}
-        virtual void operator=(const UList<Type>&) {}
-        virtual void operator=(const Field<Type>&) {}
-        virtual void operator=(const Type&) {}
+        //- Virtual assign to an expression
+        virtual void operator=(const expression::Assignment<Field<Type>>&)
+        {}
+
+        //- Inherit other assignment operators
+        using pointPatchField<Type>::operator=;
 };
 
 

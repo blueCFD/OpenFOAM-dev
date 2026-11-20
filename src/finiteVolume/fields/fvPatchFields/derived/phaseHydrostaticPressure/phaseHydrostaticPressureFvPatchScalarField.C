@@ -50,14 +50,14 @@ phaseHydrostaticPressureFvPatchScalarField
 
     if (dict.found("value"))
     {
-        fvPatchScalarField::operator=
+        scalarField::operator=
         (
             scalarField("value", iF.dimensions(), dict, p.size())
         );
     }
     else
     {
-        fvPatchScalarField::operator=(this->refValue());
+        scalarField::operator=(this->refValue());
     }
 
     this->refGrad() = 0.0;
@@ -146,12 +146,16 @@ void Foam::phaseHydrostaticPressureFvPatchScalarField::write(Ostream& os) const
 
 void Foam::phaseHydrostaticPressureFvPatchScalarField::operator=
 (
-    const fvPatchScalarField& ptf
+    const expression::Assignment<scalarField>& a
 )
 {
-    fvPatchScalarField::operator=
+    tmp<scalarField> psf(new scalarField(size()));
+    a.assign(psf.ref());
+
+    scalarField::operator=
     (
-        valueFraction()*refValue() + (1 - valueFraction())*ptf
+        valueFraction()*refValue()
+      + (1 - valueFraction())*psf
     );
 }
 

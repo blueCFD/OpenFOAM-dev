@@ -53,14 +53,14 @@ Foam::uniformInletOutletFvPatchField<Type>::uniformInletOutletFvPatchField
 
     if (dict.found("value"))
     {
-        fvPatchField<Type>::operator=
+        Field<Type>::operator=
         (
             Field<Type>("value", iF.dimensions(), dict, p.size())
         );
     }
     else
     {
-        fvPatchField<Type>::operator=(this->refValue());
+        Field<Type>::operator=(this->refValue());
     }
 
     this->refGrad() = Zero;
@@ -88,7 +88,7 @@ Foam::uniformInletOutletFvPatchField<Type>::uniformInletOutletFvPatchField
     this->valueFraction() = 0.0;
 
     // Initialise the patch value to the refValue
-    fvPatchField<Type>::operator=(this->refValue());
+    Field<Type>::operator=(this->refValue());
 
     mapper(*this, ptf);
 }
@@ -184,13 +184,16 @@ void Foam::uniformInletOutletFvPatchField<Type>::reset
 template<class Type>
 void Foam::uniformInletOutletFvPatchField<Type>::operator=
 (
-    const fvPatchField<Type>& ptf
+    const expression::Assignment<Field<Type>>& a
 )
 {
-    fvPatchField<Type>::operator=
+    tmp<Field<Type>> ptf(new Field<Type>(this->size()));
+    a.assign(ptf.ref());
+
+    Field<Type>::operator=
     (
         this->valueFraction()*this->refValue()
-        + (1 - this->valueFraction())*ptf
+      + (1 - this->valueFraction())*ptf
     );
 }
 

@@ -28,7 +28,6 @@ License
 #include "volFields.H"
 #include "surfaceFields.H"
 
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::pressureInletOutletVelocityFvPatchVectorField::
@@ -60,7 +59,7 @@ pressureInletOutletVelocityFvPatchVectorField
 
     if (dict.found("value"))
     {
-        fvPatchVectorField::operator=
+        vectorField::operator=
         (
             vectorField("value", iF.dimensions(), dict, p.size())
         );
@@ -184,12 +183,17 @@ const
 
 void Foam::pressureInletOutletVelocityFvPatchVectorField::operator=
 (
-    const fvPatchField<vector>& pvf
+    const expression::Assignment<vectorField>& a
 )
 {
     tmp<vectorField> normalValue = transform(valueFraction(), refValue());
+
+    tmp<vectorField> pvf(new vectorField(this->size()));
+    a.assign(pvf.ref());
+
     tmp<vectorField> transformGradValue = transform(I - valueFraction(), pvf);
-    fvPatchField<vector>::operator=(normalValue + transformGradValue);
+
+    vectorField::operator=(normalValue + transformGradValue);
 }
 
 

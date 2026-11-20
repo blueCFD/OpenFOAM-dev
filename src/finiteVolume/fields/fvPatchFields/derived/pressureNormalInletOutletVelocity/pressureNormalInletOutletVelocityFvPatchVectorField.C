@@ -43,7 +43,7 @@ pressureNormalInletOutletVelocityFvPatchVectorField
     phiName_(dict.lookupOrDefault<word>("phi", "phi")),
     rhoName_(dict.lookupOrDefault<word>("rho", "rho"))
 {
-    fvPatchVectorField::operator=
+    vectorField::operator=
     (
         vectorField("value", iF.dimensions(), dict, p.size())
     );
@@ -142,10 +142,13 @@ void Foam::pressureNormalInletOutletVelocityFvPatchVectorField::write
 
 void Foam::pressureNormalInletOutletVelocityFvPatchVectorField::operator=
 (
-    const fvPatchField<vector>& pvf
+    const expression::Assignment<vectorField>& a
 )
 {
-    fvPatchField<vector>::operator=
+    tmp<vectorField> pvf(new vectorField(size()));
+    a.assign(pvf.ref());
+
+    vectorField::operator=
     (
         valueFraction()*(patch().nf()*(patch().nf() & pvf))
       + (1 - valueFraction())*pvf
